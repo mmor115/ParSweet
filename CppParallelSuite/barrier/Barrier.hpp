@@ -1,11 +1,11 @@
-#ifndef BARRIER_H
-#define BARRIER_H
+#ifndef BARRIER_HPP
+#define BARRIER_HPP
 
 #include <thread>
 #include <mutex>
 #include <condition_variable>
 
-namespace parallel_suite {
+namespace parallel_suite::barrier {
 
     template <typename Mutex=std::mutex, typename Cond=std::condition_variable>
     class Barrier {
@@ -23,7 +23,7 @@ namespace parallel_suite {
             std::unique_lock lock(mutex);
 
             ++count;
-            int check = march;
+            int const check = march;
 
             if (count == nThreads) {
                 count = 0;
@@ -36,6 +36,6 @@ namespace parallel_suite {
         }
     };
 
-} // parallel_suite
+} // parallel_suite::barrier
 
-#endif //BARRIER_H
+#endif //BARRIER_HPP
