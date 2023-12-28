@@ -14,7 +14,7 @@ namespace parallel_suite::lock_hash_map {
     class NodeHead {
     public:
         Mutex mutex;
-        std::shared_ptr<Node<K, V, Mutex>> head;
+        std::shared_ptr<Node<K, V>> head;
 
         NodeHead() : mutex(), head(nullptr) { }
     };

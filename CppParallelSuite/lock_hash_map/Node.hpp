@@ -9,12 +9,12 @@
 
 namespace parallel_suite::lock_hash_map {
 
-    template <KeyType K, typename V, typename Mutex=std::mutex>
+    template <KeyType K, typename V>
     class Node {
     public:
         const K key;
         V value;
-        std::shared_ptr<Node<K, V, Mutex>> next;
+        std::shared_ptr<Node<K, V>> next;
 
         Node(K key, V value) : key(key), value(value), next(nullptr) { }
     };

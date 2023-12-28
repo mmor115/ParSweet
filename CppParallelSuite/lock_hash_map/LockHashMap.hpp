@@ -15,7 +15,7 @@ namespace parallel_suite::lock_hash_map {
     class LockHashMap {
     private:
         using MyNodeHead = NodeHead<K, V, Mutex>;
-        using MyNode = Node<K, V, Mutex>;
+        using MyNode = Node<K, V>;
 
         std::array<std::shared_ptr<MyNodeHead>, NumBuckets> buckets;
 

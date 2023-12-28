@@ -70,14 +70,14 @@ public class LockTreeMap<K extends Comparable<? super K>, V> {
                     try {
                         parent.left = newNode;
                     } finally {
-                        parent.leftLock.lock();
+                        parent.leftLock.unlock();
                     }
                 } else {
                     parent.rightLock.lock();
                     try {
                         parent.right = newNode;
                     } finally {
-                        parent.rightLock.lock();
+                        parent.rightLock.unlock();
                     }
                 }
             } finally {

@@ -13,7 +13,7 @@ namespace parallel_suite {
     };
 
     template <typename K>
-    concept OrderedKeyType = std::totally_ordered<K> && KeyType<K>;
+    concept OrderedKeyType = std::totally_ordered<K> && std::three_way_comparable<K> && KeyType<K>;
 }
 
 #endif // KEYTYPE_HPP

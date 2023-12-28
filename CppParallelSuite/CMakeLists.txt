@@ -17,5 +17,11 @@ add_executable(TestLockHashMap
         lock_hash_map/NodeHead.hpp
         KeyType.hpp)
 
+add_executable(TestLockTreeMap
+        bench/TestLockTreeMap.cpp
+        KeyType.hpp
+        lock_tree_map/LockTreeMap.hpp
+        lock_tree_map/Node.hpp)
+
 link_libraries(Threads::Threads)
 
