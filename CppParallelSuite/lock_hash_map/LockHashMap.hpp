@@ -8,10 +8,11 @@
 #include "NodeHead.hpp"
 #include "../KeyType.hpp"
 #include "../Types.hpp"
+#include "../MutexType.hpp"
 
 namespace parallel_suite::lock_hash_map {
 
-    template <KeyType K, typename V, usize NumBuckets, typename Mutex=std::mutex>
+    template <KeyType K, typename V, usize NumBuckets, MutexType Mutex=std::mutex>
     class LockHashMap {
     private:
         using MyNodeHead = NodeHead<K, V, Mutex>;

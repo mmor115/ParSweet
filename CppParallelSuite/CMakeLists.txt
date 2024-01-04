@@ -23,5 +23,14 @@ add_executable(TestLockTreeMap
         lock_tree_map/LockTreeMap.hpp
         lock_tree_map/Node.hpp)
 
+add_executable(TestLocks
+        bench/TestLocks.cpp
+        MutexType.hpp
+        locks/TASLock.hpp
+        locks/TTASLock.hpp
+        locks/ILock.cpp
+        locks/ALock.hpp
+        threadlocal/ThreadLocal.hpp)
+
 link_libraries(Threads::Threads)
 

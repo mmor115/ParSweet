@@ -7,10 +7,11 @@
 #include <condition_variable>
 #include "Node.hpp"
 #include "../KeyType.hpp"
+#include "../MutexType.hpp"
 
 namespace parallel_suite::lock_hash_map {
 
-    template <KeyType K, typename V, typename Mutex=std::mutex>
+    template <KeyType K, typename V, MutexType Mutex=std::mutex>
     class NodeHead {
     public:
         Mutex mutex;

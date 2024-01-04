@@ -5,10 +5,11 @@
 #include <mutex>
 #include <condition_variable>
 #include "../KeyType.hpp"
+#include "../MutexType.hpp"
 
 namespace parallel_suite::lock_tree_map {
 
-    template <OrderedKeyType K, typename V, typename Mutex=std::mutex>
+    template <OrderedKeyType K, typename V, MutexType Mutex=std::mutex>
     class Node {
     public:
         K key;

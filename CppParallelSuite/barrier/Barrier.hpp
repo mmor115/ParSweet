@@ -4,10 +4,11 @@
 #include <thread>
 #include <mutex>
 #include <condition_variable>
+#include "../MutexType.hpp"
 
 namespace parallel_suite::barrier {
 
-    template <typename Mutex=std::mutex, typename Cond=std::condition_variable>
+    template <MutexType Mutex=std::mutex, typename Cond=std::condition_variable>
     class Barrier {
     private:
         int const nThreads;
