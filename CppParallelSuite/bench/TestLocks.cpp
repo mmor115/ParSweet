@@ -9,6 +9,7 @@
 #include "../MutexType.hpp"
 #include "../locks/BackoffLock.hpp"
 #include "../locks/CLHLock.hpp"
+#include "../locks/MCSLock.hpp"
 
 namespace parallel_bench::locks {
     using namespace parallel_suite;
@@ -73,7 +74,8 @@ int main() {
             ALock<Threads>,
             ILock,
             BackoffLock<>,
-            CLHLock
+            CLHLock,
+            MCSLock
     >();
     return 0;
 }

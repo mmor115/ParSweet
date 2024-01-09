@@ -5,30 +5,30 @@
 
 #include <atomic>
 #include <thread>
-#include <memory>
 #include "../threadlocal/ThreadLocal.hpp"
 
 namespace parallel_suite::locks {
     using namespace parallel_suite::threadlocal;
 
-    class QNode {
-    public:
-        bool locked;
-        QNode() : locked(false) { }
-    };
+    namespace clh {
+        class QNode {
+        public:
+            bool locked;
+            QNode() : locked(false) { }
+        };
+    }
 
     class CLHLock {
     private:
-        ThreadLocal<QNode> myPredecessor;
-        ThreadLocal<QNode> myNode;
-        std::atomic<QNode*> tail;
+        ThreadLocal<clh::QNode> myPredecessor;
+        ThreadLocal<clh::QNode> myNode;
+        std::atomic<clh::QNode*> tail;
 
     public:
-        CLHLock() : myPredecessor(), myNode(), tail(new QNode()) { }
+        CLHLock() : myPredecessor(), myNode(), tail(new clh::QNode()) { }
 
         ~CLHLock() {
-            QNode* qNode = tail.load();
-            delete qNode;
+            delete tail.load();
         }
 
         void lock() {
@@ -36,10 +36,10 @@ namespace parallel_suite::locks {
                 myNode.init();
             }
 
-            QNode* qNode = myNode.getPtr();
+            clh::QNode* qNode = myNode.getPtr();
             qNode->locked = true;
 
-            QNode* predecessor = tail.exchange(qNode);
+            clh::QNode* predecessor = tail.exchange(qNode);
 
             myPredecessor.setPtr(predecessor);
 
@@ -49,7 +49,7 @@ namespace parallel_suite::locks {
         }
 
         void unlock() {
-            QNode* qNode = myNode.getPtr();
+            clh::QNode* qNode = myNode.getPtr();
             qNode->locked = false;
             myNode.setPtr(myPredecessor.getPtr());
             myPredecessor.setPtr(nullptr);

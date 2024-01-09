@@ -21,15 +21,22 @@ namespace parallel_suite::threadlocal {
         }
 
     public:
-        ThreadLocal(T* (*creator)(), void (*deleter)(T*)) : key(), creator(creator) {
-            auto err = pthread_key_create(&key, deleter);
+        ThreadLocal() requires std::is_default_constructible_v<T> : key(), creator(defaultCreator) {
+            auto err = pthread_key_create(&key, reinterpret_cast<void (*)(void*)>(defaultDeleter));
             if (err != 0) {
                 throw std::system_error(err, std::generic_category(), "pthread_key_create failed.");
             }
         }
 
-        ThreadLocal() requires std::is_default_constructible_v<T> : key(), creator(defaultCreator) {
-            auto err = pthread_key_create(&key, reinterpret_cast<void (*)(void*)>(defaultDeleter));
+        explicit ThreadLocal(void (*deleter)(T*)) requires std::is_default_constructible_v<T> : key(), creator(defaultCreator) {
+            auto err = pthread_key_create(&key, reinterpret_cast<void (*)(void*)>(deleter));
+            if (err != 0) {
+                throw std::system_error(err, std::generic_category(), "pthread_key_create failed.");
+            }
+        }
+
+        ThreadLocal(T* (*creator)(), void (*deleter)(T*)) : key(), creator(creator) {
+            auto err = pthread_key_create(&key, reinterpret_cast<void (*)(void*)>(deleter));
             if (err != 0) {
                 throw std::system_error(err, std::generic_category(), "pthread_key_create failed.");
             }
