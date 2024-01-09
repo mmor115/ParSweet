@@ -7,6 +7,8 @@
 #include "../locks/TASLock.hpp"
 #include "../locks/TTASLock.hpp"
 #include "../MutexType.hpp"
+#include "../locks/BackoffLock.hpp"
+#include "../locks/CLHLock.hpp"
 
 namespace parallel_bench::locks {
     using namespace parallel_suite;
@@ -63,6 +65,15 @@ void testLocksRepeatedly() {
 }
 
 int main() {
-    testLocksRepeatedly<std::mutex, std::recursive_mutex, TASLock, TTASLock, ALock<Threads>, ILock>();
+    testLocksRepeatedly<
+            std::mutex,
+            std::recursive_mutex,
+            TASLock,
+            TTASLock,
+            ALock<Threads>,
+            ILock,
+            BackoffLock<>,
+            CLHLock
+    >();
     return 0;
 }

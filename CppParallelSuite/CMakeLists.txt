@@ -30,7 +30,10 @@ add_executable(TestLocks
         locks/TTASLock.hpp
         locks/ILock.cpp
         locks/ALock.hpp
-        threadlocal/ThreadLocal.hpp)
+        threadlocal/ThreadLocal.hpp
+        locks/BackoffLock.hpp
+        Rand.hpp
+        locks/CLHLock.hpp)
 
 link_libraries(Threads::Threads)
 
