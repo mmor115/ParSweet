@@ -17,4 +17,5 @@ get_target_property(_classDir ParallelSuite CLASSDIR)
 message(STATUS "Jar file ${_jarFile}")
 message(STATUS "Class compiled to ${_classDir}")
 
-add_test(NAME TestParallelSuite COMMAND ${Java_JAVA_EXECUTABLE} -cp ${_jarFile} edu.lsu.cct.parallelsuite.bench.TestToySoldiers)
+add_test(NAME TestParallelJavaToySoldiers COMMAND ${Java_JAVA_EXECUTABLE} -cp ${_jarFile} edu.lsu.cct.parallelsuite.bench.TestToySoldiers)
+add_test(NAME TestParallelJavaBarrier COMMAND ${Java_JAVA_EXECUTABLE} -cp ${_jarFile} edu.lsu.cct.parallelsuite.bench.TestBarrier)
