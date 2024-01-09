@@ -34,7 +34,8 @@ add_executable(TestLocks
         locks/BackoffLock.hpp
         Rand.hpp
         locks/CLHLock.hpp
-        locks/MCSLock.hpp)
+        locks/MCSLock.hpp
+        threadlocal/ThreadLocalRand.cpp)
 
 link_libraries(Threads::Threads)
 

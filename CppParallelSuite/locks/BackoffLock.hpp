@@ -5,7 +5,7 @@
 #include <atomic>
 #include <chrono>
 #include <thread>
-#include "../Rand.hpp"
+#include "../threadlocal/ThreadLocalRand.hpp"
 
 namespace parallel_suite::locks {
 
@@ -18,7 +18,6 @@ namespace parallel_suite::locks {
 
         void lock() {
             int delayLimit = MinDelay;
-            IntRand rand;
 
             for (;;) {
                 while (aBool.load()) {
@@ -28,7 +27,7 @@ namespace parallel_suite::locks {
                 if (!aBool.exchange(true)) {
                     return;
                 } else {
-                    auto delay = std::chrono::milliseconds(rand.getRand(0, delayLimit));
+                    auto delay = std::chrono::milliseconds(ThreadLocalRand::intRand.getRand(0, delayLimit));
                     delayLimit = std::min(MaxDelay, 2 * delayLimit);
                     std::this_thread::sleep_for(delay);
                 }

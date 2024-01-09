@@ -14,7 +14,7 @@ namespace parallel_suite::locks {
         class QNode {
         public:
             std::atomic<bool> locked;
-            QNode* next;
+            std::atomic<QNode*> next;
             QNode() : locked(false), next(nullptr) { }
         };
     }
@@ -50,17 +50,17 @@ namespace parallel_suite::locks {
 
         void unlock() {
             mcs::QNode* qNode = myNode.getPtr();
-            if (!qNode->next) {
+            if (!qNode->next.load()) {
                 mcs::QNode* dummy = qNode;
                 if (tail.compare_exchange_strong(dummy, nullptr)) {
                     return;
                 }
-                while (!qNode->next) {
+                while (!qNode->next.load()) {
                     std::this_thread::yield();
                 }
             }
 
-            qNode->next->locked = false;
+            qNode->next.load()->locked = false;
             qNode->next = nullptr;
         }
     };
