@@ -9,7 +9,7 @@ project (ParallelSuite NONE)
 
 set(CMAKE_JAVA_COMPILE_FLAGS "-source" "1.10" "-target" "1.10")
 
-add_jar(ParallelSuite  ./JavaParallelSuite/src/edu/lsu/cct/parallelsuite/Barrier.java ./JavaParallelSuite/src/edu/lsu/cct/parallelsuite/bench/Misc.java ./JavaParallelSuite/src/edu/lsu/cct/parallelsuite/bench/TestBarrier.java ./JavaParallelSuite/src/edu/lsu/cct/parallelsuite/bench/TestToySoldiers.java ./JavaParallelSuite/src/edu/lsu/cct/parallelsuite/LockHashMap.java ./JavaParallelSuite/src/edu/lsu/cct/parallelsuite/LockTreeMap.java ./JavaParallelSuite/src/edu/lsu/cct/parallelsuite/ToySoldiersSim.java)
+add_jar(ParallelSuite ./src/edu/lsu/cct/parallelsuite/Barrier.java ./src/edu/lsu/cct/parallelsuite/bench/Misc.java ./src/edu/lsu/cct/parallelsuite/bench/TestToySoldiers.java ./src/edu/lsu/cct/parallelsuite/bench/TestBarrier.java ./src/edu/lsu/cct/parallelsuite/LockHashMap.java ./src/edu/lsu/cct/parallelsuite/LockTreeMap.java ./src/edu/lsu/cct/parallelsuite/ToySoldiersSim.java)
 
 get_target_property(_jarFile ParallelSuite JAR_FILE)
 get_target_property(_classDir ParallelSuite CLASSDIR)
