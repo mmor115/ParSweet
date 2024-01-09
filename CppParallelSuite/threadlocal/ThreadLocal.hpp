@@ -3,7 +3,6 @@
 #define THREADLOCAL_HPP
 
 #include <pthread.h>
-#include <cstdlib>
 
 namespace parallel_suite::threadlocal {
 
@@ -11,10 +10,27 @@ namespace parallel_suite::threadlocal {
     class ThreadLocal {
     private:
         pthread_key_t key;
+        T* (*creator)();
+
+        static T* defaultCreator() {
+            return new T();
+        }
+
+        static void defaultDeleter(T* ptr) {
+            delete ptr;
+        }
+
     public:
-        ThreadLocal() : key{} {
-            int err;
-            if ((err = pthread_key_create(&key, free)) != 0) {
+        ThreadLocal(T* (*creator)(), void (*deleter)(T*)) : key(), creator(creator) {
+            auto err = pthread_key_create(&key, deleter);
+            if (err != 0) {
+                throw std::system_error(err, std::generic_category(), "pthread_key_create failed.");
+            }
+        }
+
+        ThreadLocal() requires std::is_default_constructible_v<T> : key(), creator(defaultCreator) {
+            auto err = pthread_key_create(&key, reinterpret_cast<void (*)(void*)>(defaultDeleter));
+            if (err != 0) {
                 throw std::system_error(err, std::generic_category(), "pthread_key_create failed.");
             }
         }
@@ -47,12 +63,12 @@ namespace parallel_suite::threadlocal {
             return ptr != nullptr;
         }
 
-        void allocate() {
+        void init() {
             void* ptr = pthread_getspecific(key);
 
             if (!ptr) {
-                int err;
-                if ((err = pthread_setspecific(key, malloc(sizeof(T)))) != 0) {
+                auto err = pthread_setspecific(key, (void*) creator());
+                if (err != 0) {
                     throw std::system_error(err, std::generic_category(), "pthread_setspecific failed.");
                 }
             }
@@ -64,8 +80,8 @@ namespace parallel_suite::threadlocal {
             if (ptr) {
                 *((T*) ptr) = val;
             } else {
-                int err;
-                if ((err = pthread_setspecific(key, malloc(sizeof(T)))) != 0) {
+                auto err = pthread_setspecific(key, (void*) creator());
+                if (err != 0) {
                     throw std::system_error(err, std::generic_category(), "pthread_setspecific failed.");
                 }
                 *((T*) pthread_getspecific(key)) = val;
@@ -73,8 +89,8 @@ namespace parallel_suite::threadlocal {
         }
 
         void setPtr(T* ptr) {
-            int err;
-            if ((err = pthread_setspecific(key, (void*) ptr)) != 0) {
+            auto err = pthread_setspecific(key, (void*) ptr);
+            if (err != 0) {
                 throw std::system_error(err, std::generic_category(), "pthread_setspecific failed.");
             }
         }

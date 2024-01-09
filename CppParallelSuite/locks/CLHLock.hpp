@@ -24,22 +24,16 @@ namespace parallel_suite::locks {
         std::atomic<QNode*> tail;
 
     public:
-        CLHLock() : myPredecessor(), myNode(), tail() {
-            QNode* tailNode = (QNode*) malloc(sizeof(QNode));
-            tailNode->locked = false;
-            tail.store(tailNode);
-        }
+        CLHLock() : myPredecessor(), myNode(), tail(new QNode()) { }
 
         ~CLHLock() {
             QNode* qNode = tail.load();
-            if (qNode) {
-                free(qNode);
-            }
+            delete qNode;
         }
 
         void lock() {
             if (!myNode.isSet()) {
-                myNode.allocate();
+                myNode.init();
             }
 
             QNode* qNode = myNode.getPtr();
