@@ -169,8 +169,8 @@ public class ToySoldiersSim {
         }
     }
 
+    private static final AtomicInteger idCounter = new AtomicInteger(0);
     public class Soldier implements Runnable {
-        private static final AtomicInteger idCounter = new AtomicInteger(0);
 
         private final Random random;
         private final Lock lock;
