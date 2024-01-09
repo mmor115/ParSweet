@@ -21,7 +21,9 @@ namespace parallel_suite::locks {
             IntRand rand;
 
             for (;;) {
-                while (aBool.load()) { }
+                while (aBool.load()) {
+                    std::this_thread::yield();
+                }
 
                 if (!aBool.exchange(true)) {
                     return;
