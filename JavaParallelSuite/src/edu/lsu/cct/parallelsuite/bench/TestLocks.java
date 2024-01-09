@@ -1,5 +1,7 @@
 package edu.lsu.cct.parallelsuite.bench;
 
+import edu.lsu.cct.parallelsuite.locks.*;
+
 import java.util.LinkedList;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
@@ -70,7 +72,14 @@ public class TestLocks {
 
     public static void main(String[] args) {
         testLocksRepeatedly(
-                ReentrantLock::new
+                ReentrantLock::new,
+                TASLock::new,
+                TTASLock::new,
+                () -> new ALock(THREADS),
+                ILock::new,
+                BackoffLock::new,
+                CLHLock::new,
+                MCSLock::new
         );
     }
 }
