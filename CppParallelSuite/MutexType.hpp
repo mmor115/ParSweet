@@ -6,8 +6,7 @@
 
 namespace parallel_suite {
     template <typename L>
-    concept MutexType = requires(L l) {
-        { L() } -> std::same_as<L>;
+    concept MutexType = std::is_default_constructible_v<L> && requires(L l) {
         l.lock();
         l.unlock();
     };
