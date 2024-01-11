@@ -39,3 +39,12 @@ add_executable(TestLocks
 
 link_libraries(Threads::Threads)
 
+enable_testing()
+add_test(NAME TestLockTreeMap
+         COMMAND ./TestLockTreeMap)
+add_test(NAME TestLockHashMap
+         COMMAND ./TestLockHashMap)
+add_test(NAME TestLocks
+         COMMAND ./TestLocks)
+add_test(NAME TestBarrier
+         COMMAND ./TestBarrier)
