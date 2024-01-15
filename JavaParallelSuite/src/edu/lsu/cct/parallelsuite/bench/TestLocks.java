@@ -51,7 +51,9 @@ public class TestLocks {
             fut.join();
         }
 
-        return counter.verify();
+        var v = counter.verify();
+        assert v;
+        return v;
     }
 
     private static final int TRIES = 30;

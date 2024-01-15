@@ -14,8 +14,8 @@ add_jar(ParallelSuite
     ./src/edu/lsu/cct/parallelsuite/bench/Misc.java 
     ./src/edu/lsu/cct/parallelsuite/bench/TestToySoldiers.java 
     ./src/edu/lsu/cct/parallelsuite/bench/TestBarrier.java 
-    ./src/edu/lsu/cct/parallelsuite/LockHashMap.java 
-    ./src/edu/lsu/cct/parallelsuite/LockTreeMap.java 
+    ./src/edu/lsu/cct/parallelsuite/maps/LockHashMap.java
+    ./src/edu/lsu/cct/parallelsuite/maps/LockTreeMap.java
     ./src/edu/lsu/cct/parallelsuite/ToySoldiersSim.java)
 
 get_target_property(_jarFile ParallelSuite JAR_FILE)

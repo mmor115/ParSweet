@@ -1,4 +1,4 @@
-package edu.lsu.cct.parallelsuite;
+package edu.lsu.cct.parallelsuite.maps;
 
 import java.util.concurrent.locks.Lock;
 import java.util.function.Supplier;
