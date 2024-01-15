@@ -1,6 +1,7 @@
 package edu.lsu.cct.parallelsuite.bench;
 
 import edu.lsu.cct.parallelsuite.sets.FineGrainedSet;
+import edu.lsu.cct.parallelsuite.sets.OptimisticSet;
 
 import java.util.LinkedList;
 import java.util.Random;
@@ -201,14 +202,23 @@ public class TestSets {
         testC.test();
     }
 
+    private static void testSets() {
+        // Sanity check: Standard Java implementation
+        testSet(ConcurrentHashMap::newKeySet, ConcurrentHashMap::newKeySet);
+
+        testSet(FineGrainedSet::new, FineGrainedSet::new);
+        testSet(OptimisticSet::new, OptimisticSet::new);
+    }
+
+    private static final int TIMES = 5;
+
     public static void main(String[] args) {
         boolean assertionsOn = false;
         assert assertionsOn = true;
         System.out.printf("Assertions are %s.%n", assertionsOn ? "ON" : "OFF");
 
-        // Sanity check: Standard Java implementation
-        testSet(ConcurrentHashMap::newKeySet, ConcurrentHashMap::newKeySet);
-
-        testSet(FineGrainedSet::new, FineGrainedSet::new);
+        for (int i = 0; i < TIMES; i++) {
+            testSets();
+        }
     }
 }

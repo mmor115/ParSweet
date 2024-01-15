@@ -54,4 +54,6 @@ public interface SlimSet<E> extends Set<E> {
     default void clear() {
         throw new IllegalStateException("Not implemented in SlimSet.");
     }
+
+    E getEqual(E e);
 }

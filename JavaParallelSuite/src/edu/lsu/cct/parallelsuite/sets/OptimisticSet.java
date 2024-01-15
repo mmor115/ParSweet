@@ -5,11 +5,11 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Supplier;
 
-public class FineGrainedSet<T> implements SlimSet<T> {
+public class OptimisticSet<T> implements SlimSet<T> {
     private final Node head;
     private final Supplier<Lock> lockSupplier;
 
-    public FineGrainedSet(Supplier<Lock> lockSupplier) {
+    public OptimisticSet(Supplier<Lock> lockSupplier) {
         this.lockSupplier = lockSupplier;
         this.head = new Node();
         head.key = Integer.MIN_VALUE;
@@ -17,39 +17,46 @@ public class FineGrainedSet<T> implements SlimSet<T> {
         head.next.key = Integer.MAX_VALUE;
     }
 
-    public FineGrainedSet() {
+    public OptimisticSet() {
         this(ReentrantLock::new);
     }
 
-    private boolean find(T t, FindCallback<Node> callback) {
+    private boolean find(final T t, FindCallback<Node> callback) {
         final var key = t.hashCode();
 
-        head.lock();
-        var predecessor = head;
-
-        try {
+        for (;;) {
+            var predecessor = head;
             var current = predecessor.next;
-            current.lock();
+
+            while (current.next != null
+                    && current.key <= key
+                    && (key != current.key || !Objects.equals(t, current.value))) {
+                predecessor = current;
+                current = current.next;
+            }
 
             try {
-                while (current.next != null
-                        && current.key <= key
-                        && (key != current.key || !Objects.equals(t, current.value))) {
-                    predecessor.unlock();
-                    predecessor = current;
-                    current = current.next;
-                    current.lock();
+                predecessor.lock();
+                current.lock();
+
+                var check = head;
+
+                while (check.key < predecessor.key
+                        || (check.key == predecessor.key && !Objects.equals(check.next.value, current.value))) {
+                    check = check.next;
+                }
+
+                if (check != predecessor || predecessor.next != current) {
+                    continue;
                 }
 
                 return callback.onFound(predecessor, current);
             } finally {
                 current.unlock();
+                predecessor.unlock();
             }
-        } finally {
-            predecessor.unlock();
         }
     }
-
     @Override
     public boolean contains(Object o) {
         return find((T) o, (predecessor, current) -> Objects.equals(o, current.value));
