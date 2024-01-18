@@ -40,7 +40,6 @@ namespace parallel_bench::sets {
                     TEST_NOT_X;
                 }
 
-
                 for (int i = 0; i < WorkSize; i++) {
                     x = theSet.add(i * Threads + threadId);
                     TEST_X;
@@ -78,7 +77,7 @@ namespace parallel_bench::sets {
 using namespace parallel_bench::sets;
 
 int main() {
-    bool ok = testA<FineGrainedSet<int, parallel_suite::locks::TTASLock>>();
+    bool ok = testA<FineGrainedSet<int, std::mutex>>();
     return ok ? 0
               : 0xBAD;
 }

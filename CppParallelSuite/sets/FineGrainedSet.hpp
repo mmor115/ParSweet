@@ -25,26 +25,26 @@ namespace parallel_suite::sets {
             std::unique_lock predecessorLock(head->mutex);
             std::unique_lock currentLock(head->next->mutex);
 
-            auto* predecessor = &head;
-            auto* current = &head->next;
+            std::shared_ptr<MyNode> predecessor = head;
+            std::shared_ptr<MyNode> current = head->next;
 
-            while ((**current).next != nullptr
-                    && (**current).key <= key
-                    && (key != (**current).key || t != (**current).value)) {
+            while (current->next.get() != nullptr
+                    && current->key <= key
+                    && (key != current->key || t != current->value)) {
                 predecessor = current;
-                current = &((**current).next);
+                current = current->next;
                 predecessorLock.swap(currentLock);
-                currentLock = std::unique_lock((**current).mutex);
+                currentLock = std::unique_lock(current->mutex);
             }
 
             currentLock.unlock();
 
-            return callback(predecessor->get(), current->get());
+            return callback(predecessor.get(), current.get());
         }
 
     public:
-        FineGrainedSet() : head(std::make_unique<MyNode>(HeadNode)) {
-            head->next = std::make_unique<MyNode>(TailNode);
+        FineGrainedSet() : head(std::make_shared<MyNode>(HeadNode)) {
+            head->next = std::make_shared<MyNode>(TailNode);
         }
 
         bool contains(T const& t) {
@@ -74,7 +74,7 @@ namespace parallel_suite::sets {
                     return false;
                 }
 
-                auto newNode = std::make_unique<MyNode>(t);
+                auto newNode = std::make_shared<MyNode>(t);
                 newNode->next.swap(predecessor->next);
                 predecessor->next = std::move(newNode);
                 return true;

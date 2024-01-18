@@ -4,6 +4,21 @@ project(CppParallelSuite)
 set(CMAKE_CXX_STANDARD 20)
 
 set(THREADS_PREFER_PTHREAD_FLAG ON)
+
+set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-pthread")
+
+if (DEFINED ENV{ASAN})
+    add_compile_options(-fsanitize=address)
+    add_link_options(-fsanitize=address)
+    message(STATUS "ASan enabled")
+endif()
+
+if (DEFINED ENV{UBSAN})
+    add_compile_options(-fsanitize=undefined)
+    add_link_options(-fsanitize=undefined)
+    message(STATUS "UBan enabled")
+endif()
+
 find_package(Threads REQUIRED)
 
 add_executable(TestBarrier
@@ -56,3 +71,5 @@ add_test(NAME TestLocks
          COMMAND ./TestLocks)
 add_test(NAME TestBarrier
          COMMAND ./TestBarrier)
+add_test(NAME TestSets
+         COMMAND ./TestSets)
