@@ -50,7 +50,7 @@ namespace parallel_bench::locks {
 using namespace parallel_bench::locks;
 
 template <MutexType... Mutices>
-void testLocksRepeatedly() {
+bool testLocksRepeatedly() {
     constexpr static int Tries = 30;
     bool ok = true;
 
@@ -63,10 +63,12 @@ void testLocksRepeatedly() {
     } else {
         std::cout << "A test failed!" << std::endl;
     }
+
+    return ok;
 }
 
 int main() {
-    testLocksRepeatedly<
+    bool ok = testLocksRepeatedly<
             std::mutex,
             std::recursive_mutex,
             TASLock,
@@ -77,5 +79,7 @@ int main() {
             CLHLock,
             MCSLock
     >();
-    return 0;
+
+    return ok ? 0
+              : 0xBAD;
 }

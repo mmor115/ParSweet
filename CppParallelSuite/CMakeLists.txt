@@ -37,9 +37,17 @@ add_executable(TestLocks
         locks/MCSLock.hpp
         threadlocal/ThreadLocalRand.cpp)
 
+add_executable(TestSets
+        bench/TestSets.cpp
+        sets/FineGrainedSet.hpp
+        sets/NodeMarkers.hpp
+        sets/SetNode.hpp
+        sets/SetTypes.hpp)
+
 link_libraries(Threads::Threads)
 
 enable_testing()
+
 add_test(NAME TestLockTreeMap
          COMMAND ./TestLockTreeMap)
 add_test(NAME TestLockHashMap
