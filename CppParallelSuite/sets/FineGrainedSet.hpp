@@ -16,7 +16,7 @@ namespace parallel_suite::sets {
     private:
         using MyNode = Node<T, Mutex>;
 
-        std::unique_ptr<MyNode> head;
+        std::shared_ptr<MyNode> head;
 
         template<FindCallback<MyNode> F>
         bool find(T const& t, F&& callback) {
@@ -36,6 +36,8 @@ namespace parallel_suite::sets {
                 predecessorLock.swap(currentLock);
                 currentLock = std::unique_lock((**current).mutex);
             }
+
+            currentLock.unlock();
 
             return callback(predecessor->get(), current->get());
         }

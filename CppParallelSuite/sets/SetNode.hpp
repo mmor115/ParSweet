@@ -17,7 +17,7 @@ namespace parallel_suite::sets {
         Mutex mutex;
         usize const key;
         std::optional<T> const value;
-        std::unique_ptr<Node> next;
+        std::shared_ptr<Node> next;
 
         explicit Node(T value) : mutex(), key(std::hash<T>{}(value)), value(value), next(nullptr) { }
         explicit Node(HeadNode_t) : mutex(), key(0), value(std::nullopt), next(nullptr) { }
