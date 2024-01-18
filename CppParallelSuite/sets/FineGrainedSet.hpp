@@ -37,6 +37,8 @@ namespace parallel_suite::sets {
                 currentLock = std::unique_lock((**current).mutex);
             }
 
+            currentLock.unlock();
+
             return callback(predecessor->get(), current->get());
         }
 
