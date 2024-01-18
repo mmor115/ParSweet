@@ -1,6 +1,7 @@
 package edu.lsu.cct.parallelsuite.bench;
 
 import edu.lsu.cct.parallelsuite.sets.FineGrainedSet;
+import edu.lsu.cct.parallelsuite.sets.LazySet;
 import edu.lsu.cct.parallelsuite.sets.OptimisticSet;
 
 import java.util.LinkedList;
@@ -208,6 +209,7 @@ public class TestSets {
 
         testSet(FineGrainedSet::new, FineGrainedSet::new);
         testSet(OptimisticSet::new, OptimisticSet::new);
+        testSet(LazySet::new, LazySet::new);
     }
 
     private static final int TIMES = 5;
