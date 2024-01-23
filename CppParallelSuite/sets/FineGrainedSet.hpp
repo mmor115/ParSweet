@@ -18,7 +18,7 @@ namespace parallel_suite::sets {
 
         std::shared_ptr<MyNode> head;
 
-        template<bool ReleaseCurrent = false, FindCallback<MyNode> F>
+        template<FindCallback<MyNode> F>
         bool find(T const& t, F&& callback) {
             const auto key = std::hash<T>{}(t);
 
@@ -37,15 +37,7 @@ namespace parallel_suite::sets {
                 currentLock = std::unique_lock(current->mutex);
             }
 
-            auto changeHappened = callback(predecessor.get(), current.get());
-
-            if constexpr (ReleaseCurrent) {
-                if (changeHappened) {
-                    currentLock.release();
-                }
-            }
-
-            return changeHappened;
+            return callback(predecessor.get(), current.get());
         }
 
     public:
@@ -88,7 +80,7 @@ namespace parallel_suite::sets {
         }
 
         bool remove(T const& t) {
-            return find<true>(t, [&t](auto* predecessor, auto* current) {
+            return find(t, [&t](auto* predecessor, auto* current) {
                 if (t != current->value) {
                     return false;
                 }
