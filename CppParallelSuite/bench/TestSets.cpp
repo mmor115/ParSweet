@@ -15,7 +15,7 @@ namespace parallel_bench::sets {
     using namespace parallel_suite::sets;
 
     constexpr static int Threads = 12;
-    constexpr static int WorkSize = 1000;
+    constexpr static int WorkSize = 1000 / Threads;
     constexpr static int WorkRange = 15;
 
     template <SetType<int> IntSet>
