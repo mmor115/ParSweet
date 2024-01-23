@@ -15,7 +15,12 @@ namespace parallel_suite::sets {
     };
 
     template <typename F, typename N>
-    concept FindCallback = requires(F f, N* n1, N* n2) {
+    concept FindCallback = requires(F f, std::shared_ptr<N> n1, std::shared_ptr<N> n2) {
+        f(n1, n2);
+    };
+
+    template <typename F, typename N>
+    concept PtrFindCallback = requires(F f, N* n1, N* n2) {
         f(n1, n2);
     };
 } // parallel_suite::sets

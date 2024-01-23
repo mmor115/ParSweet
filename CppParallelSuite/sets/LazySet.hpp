@@ -15,7 +15,7 @@ namespace parallel_suite::sets {
     template <OrderedKeyType T, MutexType Mutex=std::mutex>
     class LazySet {
     private:
-        using MyNode = MarkableNode<T, Mutex>;
+        using MyNode = AtomicMarkableNode<T, Mutex>;
 
         std::shared_ptr<MyNode> head;
 
@@ -25,27 +25,25 @@ namespace parallel_suite::sets {
 
             for (;;) {
                 std::shared_ptr<MyNode> predecessor = head;
-                std::shared_ptr<MyNode> current = head->next;
+                std::shared_ptr<MyNode> current = predecessor->next;
 
-                while (current
-                       && current->next
+                while (current->next.load()
                        && current->key <= key
                        && (key != current->key || t != current->value)) {
                     predecessor = current;
                     current = current->next;
                 }
 
-                if (!current || !predecessor) {
-                    continue;
-                }
+                assert(current);
+                assert(predecessor);
 
                 std::unique_lock predecessorLock(predecessor->mutex, std::defer_lock);
                 std::unique_lock currentLock(current->mutex, std::defer_lock);
 
                 std::lock(predecessorLock, currentLock);
 
-                if (!predecessor->deleted && !current->deleted && predecessor->next == current) {
-                    return callback(predecessor.get(), current.get());
+                if (!predecessor->deleted && !current->deleted && predecessor->next.load() == current) {
+                    return callback(predecessor, current);
                 }
             }
         }
@@ -56,7 +54,7 @@ namespace parallel_suite::sets {
         }
 
         bool contains(T const& t) {
-            return find(t, [&t](auto* predecessor, auto* current) {
+            return find(t, [&t](auto predecessor, auto current) {
                 return t == current->value;
             });
         }
@@ -64,7 +62,7 @@ namespace parallel_suite::sets {
         std::optional<T> getEqual(T const& t) {
             std::optional<T> ret;
 
-            find(t, [&t, &ret](auto* predecessor, auto* current) {
+            find(t, [&t, &ret](auto predecessor, auto current) {
                 if (t != current->value) {
                     return false;
                 }
@@ -77,25 +75,25 @@ namespace parallel_suite::sets {
         }
 
         bool add(T t) {
-            return find(t, [&t](auto* predecessor, auto* current) {
+            return find(t, [&t](auto predecessor, auto current) {
                 if (t == current->value) {
                     return false;
                 }
 
                 auto newNode = std::make_shared<MyNode>(t);
-                newNode->next.swap(predecessor->next);
+                newNode->next = predecessor->next.load();
                 predecessor->next = std::move(newNode);
                 return true;
             });
         }
 
         bool remove(T const& t) {
-            return find(t, [&t](auto* predecessor, auto* current) {
+            return find(t, [&t](auto predecessor, auto current) {
                 if (t != current->value) {
                     return false;
                 }
                 current->deleted = true;
-                predecessor->next = current->next;
+                predecessor->next = current->next.load();
                 return true;
             });
         }

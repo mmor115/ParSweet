@@ -18,7 +18,7 @@ namespace parallel_suite::sets {
 
         std::shared_ptr<MyNode> head;
 
-        template<FindCallback<MyNode> F>
+        template<PtrFindCallback<MyNode> F>
         bool find(T const& t, F&& callback) {
             const auto key = std::hash<T>{}(t);
 

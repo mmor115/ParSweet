@@ -3,6 +3,7 @@
 #define OPTIMISTIC_SET_HPP
 
 #include <mutex>
+#include <cassert>
 #include "../Types.hpp"
 #include "../KeyType.hpp"
 #include "../MutexType.hpp"
@@ -15,7 +16,7 @@ namespace parallel_suite::sets {
     template <OrderedKeyType T, MutexType Mutex=std::mutex>
     class OptimisticSet {
     private:
-        using MyNode = Node<T, Mutex>;
+        using MyNode = AtomicNode<T, Mutex>;
 
         std::shared_ptr<MyNode> head;
 
@@ -27,17 +28,15 @@ namespace parallel_suite::sets {
                 std::shared_ptr<MyNode> predecessor = head;
                 std::shared_ptr<MyNode> current = predecessor->next;
 
-                while (current
-                       && current->next
+                while (current->next.load()
                        && current->key <= key
                        && (key != current->key || t != current->value)) {
                     predecessor = current;
                     current = current->next;
                 }
 
-                if (!current || !predecessor) {
-                    continue;
-                }
+                assert(current);
+                assert(predecessor);
 
                 std::unique_lock predecessorLock(predecessor->mutex, std::defer_lock);
                 std::unique_lock currentLock(current->mutex, std::defer_lock);
@@ -45,20 +44,19 @@ namespace parallel_suite::sets {
                 std::lock(predecessorLock, currentLock);
 
                 std::shared_ptr<MyNode> check = head;
-                std::shared_ptr<MyNode> next = head->next;
+                std::shared_ptr<MyNode> next = check->next;
 
-                while ((check && next)
-                       && ((check->key < predecessor->key
-                       || (check->key == predecessor->key && next->value != current->value)))) {
-                    check = std::move(next);
+                while (check->key < predecessor->key
+                       || (check->key == predecessor->key && next->value != current->value)) {
+                    check = next;
                     next = check->next;
                 }
 
-                if (!check || check != predecessor || predecessor->next != current) {
+                if (!check || check != predecessor || predecessor->next.load() != current) {
                     continue;
                 }
 
-                return callback(predecessor.get(), current.get());
+                return callback(predecessor, current);
             }
         }
 
@@ -68,7 +66,7 @@ namespace parallel_suite::sets {
         }
 
         bool contains(T const& t) {
-            return find(t, [&t](auto* predecessor, auto* current) {
+            return find(t, [&t](auto predecessor, auto current) {
                 return t == current->value;
             });
         }
@@ -76,7 +74,7 @@ namespace parallel_suite::sets {
         std::optional<T> getEqual(T const& t) {
             std::optional<T> ret;
 
-            find(t, [&t, &ret](auto* predecessor, auto* current) {
+            find(t, [&t, &ret](auto predecessor, auto current) {
                 if (t != current->value) {
                     return false;
                 }
@@ -89,25 +87,25 @@ namespace parallel_suite::sets {
         }
 
         bool add(T t) {
-            return find(t, [&t](auto* predecessor, auto* current) {
+            return find(t, [&t](auto predecessor, auto current) {
                 if (t == current->value) {
                     return false;
                 }
 
                 auto newNode = std::make_shared<MyNode>(t);
-                newNode->next.swap(predecessor->next);
+                newNode->next = predecessor->next.load();
                 predecessor->next = std::move(newNode);
                 return true;
             });
         }
 
         bool remove(T const& t) {
-            return find(t, [&t](auto* predecessor, auto* current) {
+            return find(t, [&t](auto predecessor, auto current) {
                 if (t != current->value) {
                     return false;
                 }
 
-                predecessor->next = std::move(current->next);
+                predecessor->next = current->next.load();
                 return true;
             });
         }
