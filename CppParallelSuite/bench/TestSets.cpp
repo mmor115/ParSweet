@@ -1,9 +1,10 @@
 #include <iostream>
 #include <vector>
-#include <thread>
 #include <mutex>
 #include <future>
 #include "../sets/FineGrainedSet.hpp"
+#include "../sets/OptimisticSet.hpp"
+#include "../sets/LazySet.hpp"
 #include "../locks/TTASLock.hpp"
 
 #define TEST_X if (!x) { return false; }
@@ -72,12 +73,21 @@ namespace parallel_bench::sets {
 
         return true;
     }
+
+    template <SetType<int>... Sets>
+    bool testAs() {
+        return (testA<Sets>() && ...);
+    }
 } // parallel_bench::sets
 
 using namespace parallel_bench::sets;
 
 int main() {
-    bool ok = testA<FineGrainedSet<int, std::mutex>>();
+    bool ok = testAs<
+            FineGrainedSet<int, std::mutex>,
+            OptimisticSet<int, std::mutex>,
+            LazySet<int, std::mutex>
+    >();
     return ok ? 0
               : 0xBAD;
 }

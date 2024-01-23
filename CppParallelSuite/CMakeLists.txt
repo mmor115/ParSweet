@@ -55,6 +55,8 @@ add_executable(TestLocks
 add_executable(TestSets
         bench/TestSets.cpp
         sets/FineGrainedSet.hpp
+        sets/OptimisticSet.hpp
+        sets/LazySet.hpp
         sets/NodeMarkers.hpp
         sets/SetNode.hpp
         sets/SetTypes.hpp)
