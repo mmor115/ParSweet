@@ -1,6 +1,10 @@
 package edu.lsu.cct.parallelsuite.bench;
 
 import edu.lsu.cct.parallelsuite.maps.LockHashMap;
+import edu.lsu.cct.parallelsuite.maps.SetBasedMap;
+import edu.lsu.cct.parallelsuite.sets.FineGrainedSet;
+import edu.lsu.cct.parallelsuite.sets.LazySet;
+import edu.lsu.cct.parallelsuite.sets.OptimisticSet;
 
 import java.util.LinkedList;
 import java.util.Map;
@@ -89,6 +93,9 @@ public class TestMaps {
         testMap(ConcurrentHashMap::new);
 
         testMap(LockHashMap::new);
+        testMap(() -> new SetBasedMap<>(FineGrainedSet::new));
+        testMap(() -> new SetBasedMap<>(OptimisticSet::new));
+        testMap(() -> new SetBasedMap<>(LazySet::new));
     }
 
     private static final int TIMES = 5;
