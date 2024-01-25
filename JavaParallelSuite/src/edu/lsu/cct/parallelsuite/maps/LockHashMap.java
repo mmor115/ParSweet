@@ -1,13 +1,19 @@
 package edu.lsu.cct.parallelsuite.maps;
 
 import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Supplier;
 
-public class LockHashMap<K, V> {
+@SuppressWarnings("unchecked")
+public class LockHashMap<K, V> implements SlimMap<K, V> {
     private static final int N_BUCKETS = 16;
 
     private final Object/*NodeHead*/[] buckets;
     private final Supplier<Lock> lockSupplier;
+
+    public LockHashMap() {
+        this(ReentrantLock::new);
+    }
 
     public LockHashMap(Supplier<Lock> lockSupplier) {
         this.lockSupplier = lockSupplier;
@@ -23,6 +29,7 @@ public class LockHashMap<K, V> {
         return ((NodeHead)buckets[index]);
     }
 
+    @Override
     public V put(K key, V value) {
         var index = getBucketIndexOfKey(key);
         var node = new Node(key, value);
@@ -60,8 +67,9 @@ public class LockHashMap<K, V> {
         return null;
     }
 
-    public V get(K key) {
-        var index = getBucketIndexOfKey(key);
+    @Override
+    public V get(Object key) {
+        var index = getBucketIndexOfKey((K) key);
         var nodeHead = getNodeHead(index);
 
         nodeHead.lock.lock();
@@ -86,8 +94,9 @@ public class LockHashMap<K, V> {
         }
     }
 
-    public boolean delete(K key) {
-        var index = getBucketIndexOfKey(key);
+    @Override
+    public V remove(Object key) {
+        var index = getBucketIndexOfKey((K) key);
         var nodeHead = getNodeHead(index);
 
         nodeHead.lock.lock();
@@ -95,7 +104,7 @@ public class LockHashMap<K, V> {
             var h = nodeHead.head;
 
             if (h == null) {
-                return false;
+                return null;
             }
 
             Node current = h, prev = null;
@@ -107,14 +116,14 @@ public class LockHashMap<K, V> {
                         prev.next = current.next;
                     }
 
-                    return true;
+                    return current.value;
                 }
 
                 prev = current;
                 current = current.next;
             }
 
-            return false;
+            return null;
         } finally {
             nodeHead.lock.unlock();
         }

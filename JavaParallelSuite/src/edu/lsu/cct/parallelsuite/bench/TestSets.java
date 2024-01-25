@@ -15,7 +15,7 @@ import java.util.function.Supplier;
 
 public class TestSets {
     private static final int THREADS = 12;
-    private static final int WORK_SIZE = 1000;
+    private static final int WORK_SIZE = 1000 / THREADS;
     private static final int WORK_RANGE = 15;
 
     private static final ExecutorService pool = Executors.newFixedThreadPool(THREADS, Misc.getDaemonThreadFactory());
