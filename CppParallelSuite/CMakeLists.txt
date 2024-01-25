@@ -32,12 +32,6 @@ add_executable(TestLockHashMap
         lock_hash_map/NodeHead.hpp
         KeyType.hpp)
 
-add_executable(TestLockTreeMap
-        bench/TestLockTreeMap.cpp
-        KeyType.hpp
-        lock_tree_map/LockTreeMap.hpp
-        lock_tree_map/Node.hpp)
-
 add_executable(TestLocks
         bench/TestLocks.cpp
         MutexType.hpp
@@ -65,8 +59,6 @@ link_libraries(Threads::Threads)
 
 enable_testing()
 
-add_test(NAME TestLockTreeMap
-         COMMAND ./TestLockTreeMap)
 add_test(NAME TestLockHashMap
          COMMAND ./TestLockHashMap)
 add_test(NAME TestLocks
