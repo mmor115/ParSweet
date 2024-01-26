@@ -4,6 +4,8 @@
 #include <mutex>
 #include "../locks/ALock.hpp"
 #include "../locks/ILock.hpp"
+#include "../locks/JLock.hpp"
+#include "../locks/TJLock.hpp"
 #include "../locks/TASLock.hpp"
 #include "../locks/TTASLock.hpp"
 #include "../MutexType.hpp"
@@ -77,7 +79,9 @@ int main() {
             ILock,
             BackoffLock<>,
             CLHLock,
-            MCSLock
+            MCSLock,
+            JLock,
+            TJLock
     >();
 
     return ok ? 0
