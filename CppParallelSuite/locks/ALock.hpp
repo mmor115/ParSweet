@@ -4,6 +4,7 @@
 
 #include <atomic>
 #include <thread>
+#include <array>
 #include "../threadlocal/ThreadLocal.hpp"
 #include "../Types.hpp"
 
