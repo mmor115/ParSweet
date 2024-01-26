@@ -24,7 +24,17 @@ add_jar(ParallelSuite
     ./src/edu/lsu/cct/parallelsuite/sets/FineGrainedSet.java
     ./src/edu/lsu/cct/parallelsuite/sets/LazySet.java
     ./src/edu/lsu/cct/parallelsuite/sets/OptimisticSet.java
-    ./src/edu/lsu/cct/parallelsuite/sets/SlimSet.java)
+    ./src/edu/lsu/cct/parallelsuite/sets/SlimSet.java
+    ./src/edu/lsu/cct/parallelsuite/locks/ALock.java
+    ./src/edu/lsu/cct/parallelsuite/locks/BackoffLock.java
+    ./src/edu/lsu/cct/parallelsuite/locks/CLHLock.java
+    ./src/edu/lsu/cct/parallelsuite/locks/ILock.java
+    ./src/edu/lsu/cct/parallelsuite/locks/JLock.java
+    ./src/edu/lsu/cct/parallelsuite/locks/MCSLock.java
+    ./src/edu/lsu/cct/parallelsuite/locks/SlimLock.java
+    ./src/edu/lsu/cct/parallelsuite/locks/TASLock.java
+    ./src/edu/lsu/cct/parallelsuite/locks/TJLock.java
+    ./src/edu/lsu/cct/parallelsuite/locks/TTASLock.java)
 
 get_target_property(_jarFile ParallelSuite JAR_FILE)
 get_target_property(_classDir ParallelSuite CLASSDIR)
@@ -36,3 +46,4 @@ add_test(NAME TestParallelJavaToySoldiers COMMAND ${Java_JAVA_EXECUTABLE} -ea -c
 add_test(NAME TestParallelJavaBarrier COMMAND ${Java_JAVA_EXECUTABLE} -ea -cp ${_jarFile} edu.lsu.cct.parallelsuite.bench.TestBarrier)
 add_test(NAME TestParallelJavaSets COMMAND ${Java_JAVA_EXECUTABLE} -ea -cp ${_jarFile} edu.lsu.cct.parallelsuite.bench.TestSets)
 add_test(NAME TestParallelJavaMaps COMMAND ${Java_JAVA_EXECUTABLE} -ea -cp ${_jarFile} edu.lsu.cct.parallelsuite.bench.TestMaps)
+add_test(NAME TestParallelJavaLocks COMMAND ${Java_JAVA_EXECUTABLE} -ea -cp ${_jarFile} edu.lsu.cct.parallelsuite.bench.TestLocks)

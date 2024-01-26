@@ -81,7 +81,9 @@ public class TestLocks {
                 ILock::new,
                 BackoffLock::new,
                 CLHLock::new,
-                MCSLock::new
+                MCSLock::new,
+                JLock::new,
+                TJLock::new
         );
     }
 }
