@@ -34,10 +34,11 @@ namespace parallel_suite::locks {
         }
 
         void unlock() {
-            auto ticket = myTicket.get();
+            const auto ticket = myTicket.get();
 
             for (;;) {
-                if (turn.compare_exchange_weak(ticket, 0)) {
+                auto dummy = ticket;
+                if (turn.compare_exchange_weak(dummy, 0)) {
                     return;
                 }
 
