@@ -14,21 +14,21 @@ namespace parallel_suite::sets {
     template <OrderedKeyType T, MutexType Mutex=std::mutex>
     class FineGrainedSet {
     private:
-        using MyNode = Node<T, Mutex>;
+        using MyNode = AtomicNode<T, Mutex>;
 
         std::shared_ptr<MyNode> head;
 
-        template<PtrFindCallback<MyNode> F>
+        template<FindCallback<MyNode> F>
         bool find(T const& t, F&& callback) {
             const auto key = std::hash<T>{}(t);
 
             std::unique_lock predecessorLock(head->mutex);
-            std::unique_lock currentLock(head->next->mutex);
+            std::unique_lock currentLock(head->next.load()->mutex);
 
             std::shared_ptr<MyNode> predecessor = head;
             std::shared_ptr<MyNode> current = head->next;
 
-            while (current->next.get() != nullptr
+            while (current->next.load()
                     && current->key <= key
                     && (key != current->key || t != current->value)) {
                 predecessor = current;
@@ -37,7 +37,7 @@ namespace parallel_suite::sets {
                 currentLock = std::unique_lock(current->mutex);
             }
 
-            return callback(predecessor.get(), current.get());
+            return callback(predecessor, current);
         }
 
     public:
@@ -46,7 +46,7 @@ namespace parallel_suite::sets {
         }
 
         bool contains(T const& t) {
-            return find(t, [&t](auto* predecessor, auto* current) {
+            return find(t, [&t](auto predecessor, auto current) {
                 return t == current->value;
             });
         }
@@ -54,7 +54,7 @@ namespace parallel_suite::sets {
         std::optional<T> getEqual(T const& t) {
             std::optional<T> ret;
 
-            find(t, [&t, &ret](auto* predecessor, auto* current) {
+            find(t, [&t, &ret](auto predecessor, auto current) {
                 if (t != current->value) {
                     return false;
                 }
@@ -67,25 +67,25 @@ namespace parallel_suite::sets {
         }
 
         bool add(T t) {
-            return find(t, [&t](auto* predecessor, auto* current) {
+            return find(t, [&t](auto predecessor, auto current) {
                 if (t == current->value) {
                     return false;
                 }
 
                 auto newNode = std::make_shared<MyNode>(t);
-                newNode->next.swap(predecessor->next);
+                newNode->next = predecessor->next.load();
                 predecessor->next = std::move(newNode);
                 return true;
             });
         }
 
         bool remove(T const& t) {
-            return find(t, [&t](auto* predecessor, auto* current) {
+            return find(t, [&t](auto predecessor, auto current) {
                 if (t != current->value) {
                     return false;
                 }
 
-                predecessor->next = std::move(current->next);
+                predecessor->next = std::move(current->next.load());
                 return true;
             });
         }
