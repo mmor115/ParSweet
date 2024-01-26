@@ -16,13 +16,14 @@ add_jar(ParallelSuite
     ./src/edu/lsu/cct/parallelsuite/bench/TestBarrier.java
     ./src/edu/lsu/cct/parallelsuite/bench/TestSets.java
     ./src/edu/lsu/cct/parallelsuite/maps/LockHashMap.java
-    ./src/edu/lsu/cct/parallelsuite/maps/LockTreeMap.java
+    ./src/edu/lsu/cct/parallelsuite/maps/SlimMap.java
     ./src/edu/lsu/cct/parallelsuite/ToySoldiersSim.java
     ./src/edu/lsu/cct/parallelsuite/sets/FindCallback.java
     ./src/edu/lsu/cct/parallelsuite/sets/FineGrainedSet.java
     ./src/edu/lsu/cct/parallelsuite/sets/LazySet.java
     ./src/edu/lsu/cct/parallelsuite/sets/OptimisticSet.java
     ./src/edu/lsu/cct/parallelsuite/sets/SlimSet.java)
+    #./src/edu/lsu/cct/parallelsuite/maps/LockTreeMap.java
 
 get_target_property(_jarFile ParallelSuite JAR_FILE)
 get_target_property(_classDir ParallelSuite CLASSDIR)

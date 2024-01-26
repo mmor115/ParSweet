@@ -25,12 +25,7 @@ public class ILock implements SlimLock {
     public void unlock() {
         var ticket = myTicket.get();
 
-        for (;;) {
-            if (turn.compareAndSet(ticket, 0)) {
-                return;
-            }
-
-            Thread.yield();
-        }
+        boolean worked = turn.compareAndSet(ticket, 0);
+        assert worked;
     }
 }
