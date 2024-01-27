@@ -16,6 +16,7 @@ add_jar(ParallelSuite
     ./src/edu/lsu/cct/parallelsuite/bench/TestToySoldiers.java 
     ./src/edu/lsu/cct/parallelsuite/bench/TestBarrier.java
     ./src/edu/lsu/cct/parallelsuite/bench/TestSets.java
+    ./src/edu/lsu/cct/parallelsuite/bench/TestLocks.java
     ./src/edu/lsu/cct/parallelsuite/bench/TestMaps.java
     ./src/edu/lsu/cct/parallelsuite/maps/SlimMap.java
     ./src/edu/lsu/cct/parallelsuite/maps/SetBasedMap.java
