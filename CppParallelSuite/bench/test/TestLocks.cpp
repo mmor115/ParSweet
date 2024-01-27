@@ -2,18 +2,18 @@
 #include <vector>
 #include <thread>
 #include <mutex>
-#include "../locks/ALock.hpp"
-#include "../locks/ILock.hpp"
-#include "../locks/JLock.hpp"
-#include "../locks/TJLock.hpp"
-#include "../locks/TASLock.hpp"
-#include "../locks/TTASLock.hpp"
-#include "../MutexType.hpp"
-#include "../locks/BackoffLock.hpp"
-#include "../locks/CLHLock.hpp"
-#include "../locks/MCSLock.hpp"
+#include "../../locks/ALock.hpp"
+#include "../../locks/ILock.hpp"
+#include "../../locks/JLock.hpp"
+#include "../../locks/TJLock.hpp"
+#include "../../locks/TASLock.hpp"
+#include "../../locks/TTASLock.hpp"
+#include "../../MutexType.hpp"
+#include "../../locks/BackoffLock.hpp"
+#include "../../locks/CLHLock.hpp"
+#include "../../locks/MCSLock.hpp"
 
-namespace parallel_bench::locks {
+namespace parallel_test::locks {
     using namespace parallel_suite;
     using namespace parallel_suite::locks;
 
@@ -47,9 +47,9 @@ namespace parallel_bench::locks {
 
         return target == counter;
     }
-} // parallel_bench::locks
+} // parallel_test::locks
 
-using namespace parallel_bench::locks;
+using namespace parallel_test::locks;
 
 template <MutexType... Mutices>
 bool testLocksRepeatedly() {

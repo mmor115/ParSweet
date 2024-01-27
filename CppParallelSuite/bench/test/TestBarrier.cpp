@@ -1,8 +1,8 @@
 #include <iostream>
 #include <vector>
-#include "../barrier/Barrier.hpp"
+#include "../../barrier/Barrier.hpp"
 
-namespace parallel_bench::barrier {
+namespace parallel_test::barrier {
     using namespace parallel_suite::barrier;
 
     constexpr int N = 12;
@@ -17,9 +17,9 @@ namespace parallel_bench::barrier {
             barrier.sync();
         }
     }
-} // parallel_bench::barrier
+} // parallel_test::barrier
 
-using namespace parallel_bench::barrier;
+using namespace parallel_test::barrier;
 
 int main() {
     std::vector<std::thread> workers;

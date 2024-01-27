@@ -16,24 +16,17 @@ endif()
 if (DEFINED ENV{UBSAN})
     add_compile_options(-fsanitize=undefined)
     add_link_options(-fsanitize=undefined)
-    message(STATUS "UBan enabled")
+    message(STATUS "UBSan enabled")
 endif()
 
 find_package(Threads REQUIRED)
 
 add_executable(TestBarrier
         barrier/Barrier.hpp
-        bench/TestBarrier.cpp)
-
-add_executable(TestLockHashMap
-        lock_hash_map/LockHashMap.hpp
-        bench/TestLockHashMap.cpp
-        lock_hash_map/Node.hpp
-        lock_hash_map/NodeHead.hpp
-        KeyType.hpp)
+        bench/test/TestBarrier.cpp)
 
 add_executable(TestLocks
-        bench/TestLocks.cpp
+        bench/test/TestLocks.cpp
         MutexType.hpp
         locks/TASLock.hpp
         locks/TTASLock.hpp
@@ -50,7 +43,7 @@ add_executable(TestLocks
         locks/TJLock.hpp)
 
 add_executable(TestSets
-        bench/TestSets.cpp
+        bench/test/TestSets.cpp
         sets/FineGrainedSet.hpp
         sets/OptimisticSet.hpp
         sets/LazySet.hpp
@@ -62,8 +55,6 @@ link_libraries(Threads::Threads)
 
 enable_testing()
 
-add_test(NAME TestLockHashMap
-         COMMAND ./TestLockHashMap)
 add_test(NAME TestLocks
          COMMAND ./TestLocks)
 add_test(NAME TestBarrier

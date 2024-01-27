@@ -2,21 +2,20 @@
 #include <vector>
 #include <mutex>
 #include <future>
-#include "../sets/FineGrainedSet.hpp"
-#include "../sets/OptimisticSet.hpp"
-#include "../sets/LazySet.hpp"
-#include "../locks/TTASLock.hpp"
+#include "../../sets/FineGrainedSet.hpp"
+#include "../../sets/OptimisticSet.hpp"
+#include "../../sets/LazySet.hpp"
+#include "../../locks/TTASLock.hpp"
 
 #define TEST_X if (!x) { return false; }
 #define TEST_NOT_X if (x) { return false; }
 
-namespace parallel_bench::sets {
+namespace parallel_test::sets {
     using namespace parallel_suite;
     using namespace parallel_suite::sets;
 
     constexpr static int Threads = 12;
     constexpr static int WorkSize = 1000 / Threads;
-    constexpr static int WorkRange = 15;
 
     template <SetType<int> IntSet>
     bool testA() {
@@ -78,9 +77,9 @@ namespace parallel_bench::sets {
     bool testAs() {
         return (testA<Sets>() && ...);
     }
-} // parallel_bench::sets
+} // parallel_test::sets
 
-using namespace parallel_bench::sets;
+using namespace parallel_test::sets;
 
 int main() {
     bool ok = testAs<
