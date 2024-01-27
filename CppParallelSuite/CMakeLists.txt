@@ -30,7 +30,6 @@ add_executable(TestLocks
         MutexType.hpp
         locks/TASLock.hpp
         locks/TTASLock.hpp
-        locks/ILock.cpp
         locks/ALock.hpp
         threadlocal/ThreadLocal.hpp
         locks/BackoffLock.hpp
@@ -39,8 +38,8 @@ add_executable(TestLocks
         locks/MCSLock.hpp
         threadlocal/ThreadLocalRand.cpp
         threadlocal/ThreadId.cpp
-        locks/JLock.hpp
-        locks/TJLock.hpp)
+        locks/IdLock.hpp
+        locks/TIdLock.hpp)
 
 add_executable(TestSets
         bench/test/TestSets.cpp

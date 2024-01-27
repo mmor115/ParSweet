@@ -3,9 +3,8 @@
 #include <thread>
 #include <mutex>
 #include "../../locks/ALock.hpp"
-#include "../../locks/ILock.hpp"
-#include "../../locks/JLock.hpp"
-#include "../../locks/TJLock.hpp"
+#include "../../locks/IdLock.hpp"
+#include "../../locks/TIdLock.hpp"
 #include "../../locks/TASLock.hpp"
 #include "../../locks/TTASLock.hpp"
 #include "../../MutexType.hpp"
@@ -76,12 +75,11 @@ int main() {
             TASLock,
             TTASLock,
             ALock<Threads>,
-            ILock,
             BackoffLock<>,
             CLHLock,
             MCSLock,
-            JLock,
-            TJLock
+            IdLock,
+            TIdLock
     >();
 
     return ok ? 0

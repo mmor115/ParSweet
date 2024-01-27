@@ -4,7 +4,7 @@ import edu.lsu.cct.parallelsuite.ThreadId;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class JLock implements SlimLock {
+public class IdLock implements SlimLock {
     private final AtomicInteger turn = new AtomicInteger(0);
 
     @Override

@@ -1,27 +1,23 @@
 
-#ifndef ILOCK_HPP
-#define ILOCK_HPP
+#ifndef JLOCK_HPP
+#define JLOCK_HPP
 
 #include <atomic>
 #include <thread>
 #include "../Types.hpp"
-#include "../threadlocal/ThreadLocal.hpp"
+#include "../threadlocal/ThreadId.hpp"
 
 namespace parallel_suite::locks {
     using namespace threadlocal;
 
-    class ILock {
+    class IdLock {
     private:
         std::atomic<usize> turn;
-        ThreadLocal<usize> myTicket;
-        static std::atomic<usize> ticketCounter;
-
     public:
-        ILock() : turn(0), myTicket() { }
+        IdLock() : turn(0) { }
 
         void lock() {
-            auto ticket = ticketCounter.fetch_add(1);
-            myTicket.set(ticket);
+            const auto ticket = ThreadId::get();
 
             for (;;) {
                 usize zero = 0;
@@ -34,7 +30,7 @@ namespace parallel_suite::locks {
         }
 
         void unlock() {
-            const auto ticket = myTicket.get();
+            const auto ticket = ThreadId::get();
 
             for (;;) {
                 auto dummy = ticket;
@@ -48,4 +44,4 @@ namespace parallel_suite::locks {
     };
 }
 
-#endif //ILOCK_HPP
+#endif //JLOCK_HPP

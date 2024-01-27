@@ -1,19 +1,18 @@
 package edu.lsu.cct.parallelsuite.locks;
 
+import edu.lsu.cct.parallelsuite.ThreadId;
+
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class ILock implements SlimLock {
+public class TIdLock implements SlimLock {
     private final AtomicInteger turn = new AtomicInteger(0);
-    private final ThreadLocal<Integer> myTicket = new ThreadLocal<>();
-    private static final AtomicInteger ticketCounter = new AtomicInteger(1);
 
     @Override
     public void lock() {
-        var ticket = ticketCounter.getAndIncrement();
-        myTicket.set(ticket);
+        var ticket = ThreadId.get();
 
         for (;;) {
-            if (turn.compareAndSet(0, ticket)) {
+            if (turn.get() == 0 && turn.compareAndSet(0, ticket)) {
                 return;
             }
 
@@ -23,7 +22,7 @@ public class ILock implements SlimLock {
 
     @Override
     public void unlock() {
-        var ticket = myTicket.get();
+        var ticket = ThreadId.get();
 
         boolean worked = turn.compareAndSet(ticket, 0);
         assert worked;

@@ -1,6 +1,6 @@
 
-#ifndef JLOCK_HPP
-#define JLOCK_HPP
+#ifndef TJLOCK_HPP
+#define TJLOCK_HPP
 
 #include <atomic>
 #include <thread>
@@ -10,18 +10,18 @@
 namespace parallel_suite::locks {
     using namespace threadlocal;
 
-    class JLock {
+    class TIdLock {
     private:
         std::atomic<usize> turn;
     public:
-        JLock() : turn(0) { }
+        TIdLock() : turn(0) { }
 
         void lock() {
             const auto ticket = ThreadId::get();
 
             for (;;) {
                 usize zero = 0;
-                if (turn.compare_exchange_weak(zero, ticket)) {
+                if (turn.load() == 0 && turn.compare_exchange_weak(zero, ticket)) {
                     return;
                 }
 
@@ -44,4 +44,4 @@ namespace parallel_suite::locks {
     };
 }
 
-#endif //JLOCK_HPP
+#endif //TJLOCK_HPP

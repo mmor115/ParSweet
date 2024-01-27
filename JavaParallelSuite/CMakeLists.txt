@@ -29,13 +29,12 @@ add_jar(ParallelSuite
     ./src/edu/lsu/cct/parallelsuite/locks/ALock.java
     ./src/edu/lsu/cct/parallelsuite/locks/BackoffLock.java
     ./src/edu/lsu/cct/parallelsuite/locks/CLHLock.java
-    ./src/edu/lsu/cct/parallelsuite/locks/ILock.java
-    ./src/edu/lsu/cct/parallelsuite/locks/JLock.java
     ./src/edu/lsu/cct/parallelsuite/locks/TwoCounterLock.java
     ./src/edu/lsu/cct/parallelsuite/locks/MCSLock.java
     ./src/edu/lsu/cct/parallelsuite/locks/SlimLock.java
     ./src/edu/lsu/cct/parallelsuite/locks/TASLock.java
-    ./src/edu/lsu/cct/parallelsuite/locks/TJLock.java
+    ./src/edu/lsu/cct/parallelsuite/locks/IdLock.java
+    ./src/edu/lsu/cct/parallelsuite/locks/TIdLock.java
     ./src/edu/lsu/cct/parallelsuite/locks/TTASLock.java)
 
 get_target_property(_jarFile ParallelSuite JAR_FILE)

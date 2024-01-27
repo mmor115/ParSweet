@@ -79,13 +79,12 @@ public class TestLocks {
                 TASLock::new,
                 TTASLock::new,
                 () -> new ALock(THREADS),
-                ILock::new,
                 BackoffLock::new,
                 TwoCounterLock::new,
                 CLHLock::new,
                 MCSLock::new,
-                JLock::new,
-                TJLock::new
+                IdLock::new,
+                TIdLock::new
         );
     }
 }
