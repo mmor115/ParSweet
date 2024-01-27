@@ -1,6 +1,7 @@
-package edu.lsu.cct.parallelsuite.bench;
+package edu.lsu.cct.parallelsuite.bench.test;
 
 import edu.lsu.cct.parallelsuite.Barrier;
+import edu.lsu.cct.parallelsuite.bench.Misc;
 
 import java.util.LinkedList;
 import java.util.concurrent.*;

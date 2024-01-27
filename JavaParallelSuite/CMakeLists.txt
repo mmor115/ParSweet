@@ -12,12 +12,12 @@ set(CMAKE_JAVA_COMPILE_FLAGS "-source" "1.10" "-target" "1.10")
 add_jar(ParallelSuite 
     ./src/edu/lsu/cct/parallelsuite/Barrier.java 
     ./src/edu/lsu/cct/parallelsuite/ThreadId.java 
-    ./src/edu/lsu/cct/parallelsuite/bench/Misc.java 
-    ./src/edu/lsu/cct/parallelsuite/bench/TestToySoldiers.java 
-    ./src/edu/lsu/cct/parallelsuite/bench/TestBarrier.java
-    ./src/edu/lsu/cct/parallelsuite/bench/TestSets.java
-    ./src/edu/lsu/cct/parallelsuite/bench/TestLocks.java
-    ./src/edu/lsu/cct/parallelsuite/bench/TestMaps.java
+    ./src/edu/lsu/cct/parallelsuite/bench/test/Misc.java
+    ./src/edu/lsu/cct/parallelsuite/bench/test/TestToySoldiers.java
+    ./src/edu/lsu/cct/parallelsuite/bench/test/TestBarrier.java
+    ./src/edu/lsu/cct/parallelsuite/bench/test/TestSets.java
+    ./src/edu/lsu/cct/parallelsuite/bench/test/TestLocks.java
+    ./src/edu/lsu/cct/parallelsuite/bench/test/TestMaps.java
     ./src/edu/lsu/cct/parallelsuite/maps/SlimMap.java
     ./src/edu/lsu/cct/parallelsuite/maps/SetBasedMap.java
     ./src/edu/lsu/cct/parallelsuite/ToySoldiersSim.java
@@ -44,8 +44,8 @@ get_target_property(_classDir ParallelSuite CLASSDIR)
 message(STATUS "Jar file ${_jarFile}")
 message(STATUS "Class compiled to ${_classDir}")
 
-add_test(NAME TestParallelJavaToySoldiers COMMAND ${Java_JAVA_EXECUTABLE} -ea -cp ${_jarFile} edu.lsu.cct.parallelsuite.bench.TestToySoldiers)
-add_test(NAME TestParallelJavaBarrier COMMAND ${Java_JAVA_EXECUTABLE} -ea -cp ${_jarFile} edu.lsu.cct.parallelsuite.bench.TestBarrier)
-add_test(NAME TestParallelJavaSets COMMAND ${Java_JAVA_EXECUTABLE} -ea -cp ${_jarFile} edu.lsu.cct.parallelsuite.bench.TestSets)
-add_test(NAME TestParallelJavaMaps COMMAND ${Java_JAVA_EXECUTABLE} -ea -cp ${_jarFile} edu.lsu.cct.parallelsuite.bench.TestMaps)
-add_test(NAME TestParallelJavaLocks COMMAND ${Java_JAVA_EXECUTABLE} -ea -cp ${_jarFile} edu.lsu.cct.parallelsuite.bench.TestLocks)
+add_test(NAME TestParallelJavaToySoldiers COMMAND ${Java_JAVA_EXECUTABLE} -ea -cp ${_jarFile} edu.lsu.cct.parallelsuite.bench.test.TestToySoldiers)
+add_test(NAME TestParallelJavaBarrier COMMAND ${Java_JAVA_EXECUTABLE} -ea -cp ${_jarFile} edu.lsu.cct.parallelsuite.bench.test.TestBarrier)
+add_test(NAME TestParallelJavaSets COMMAND ${Java_JAVA_EXECUTABLE} -ea -cp ${_jarFile} edu.lsu.cct.parallelsuite.bench.test.TestSets)
+add_test(NAME TestParallelJavaMaps COMMAND ${Java_JAVA_EXECUTABLE} -ea -cp ${_jarFile} edu.lsu.cct.parallelsuite.bench.test.TestMaps)
+add_test(NAME TestParallelJavaLocks COMMAND ${Java_JAVA_EXECUTABLE} -ea -cp ${_jarFile} edu.lsu.cct.parallelsuite.bench.test.TestLocks)

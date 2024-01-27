@@ -1,5 +1,6 @@
-package edu.lsu.cct.parallelsuite.bench;
+package edu.lsu.cct.parallelsuite.bench.test;
 
+import edu.lsu.cct.parallelsuite.bench.Misc;
 import edu.lsu.cct.parallelsuite.maps.SetBasedMap;
 import edu.lsu.cct.parallelsuite.sets.FineGrainedSet;
 import edu.lsu.cct.parallelsuite.sets.LazySet;

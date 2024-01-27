@@ -1,6 +1,7 @@
-package edu.lsu.cct.parallelsuite.bench;
+package edu.lsu.cct.parallelsuite.bench.test;
 
 import edu.lsu.cct.parallelsuite.ToySoldiersSim;
+import edu.lsu.cct.parallelsuite.bench.Misc;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
