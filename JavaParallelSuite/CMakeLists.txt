@@ -11,12 +11,12 @@ set(CMAKE_JAVA_COMPILE_FLAGS "-source" "1.10" "-target" "1.10")
 
 add_jar(ParallelSuite 
     ./src/edu/lsu/cct/parallelsuite/Barrier.java 
+    ./src/edu/lsu/cct/parallelsuite/ThreadId.java 
     ./src/edu/lsu/cct/parallelsuite/bench/Misc.java 
     ./src/edu/lsu/cct/parallelsuite/bench/TestToySoldiers.java 
     ./src/edu/lsu/cct/parallelsuite/bench/TestBarrier.java
     ./src/edu/lsu/cct/parallelsuite/bench/TestSets.java
-    ./src/edu/lsu/cct/parallelsuite/bench/TestMaps.java)
-    ./src/edu/lsu/cct/parallelsuite/maps/LockHashMap.java
+    ./src/edu/lsu/cct/parallelsuite/bench/TestMaps.java
     ./src/edu/lsu/cct/parallelsuite/maps/SlimMap.java
     ./src/edu/lsu/cct/parallelsuite/maps/SetBasedMap.java
     ./src/edu/lsu/cct/parallelsuite/ToySoldiersSim.java
@@ -30,6 +30,7 @@ add_jar(ParallelSuite
     ./src/edu/lsu/cct/parallelsuite/locks/CLHLock.java
     ./src/edu/lsu/cct/parallelsuite/locks/ILock.java
     ./src/edu/lsu/cct/parallelsuite/locks/JLock.java
+    ./src/edu/lsu/cct/parallelsuite/locks/TwoCounterLock.java
     ./src/edu/lsu/cct/parallelsuite/locks/MCSLock.java
     ./src/edu/lsu/cct/parallelsuite/locks/SlimLock.java
     ./src/edu/lsu/cct/parallelsuite/locks/TASLock.java

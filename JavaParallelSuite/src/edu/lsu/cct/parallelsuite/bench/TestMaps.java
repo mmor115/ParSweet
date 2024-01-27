@@ -1,6 +1,5 @@
 package edu.lsu.cct.parallelsuite.bench;
 
-import edu.lsu.cct.parallelsuite.maps.LockHashMap;
 import edu.lsu.cct.parallelsuite.maps.SetBasedMap;
 import edu.lsu.cct.parallelsuite.sets.FineGrainedSet;
 import edu.lsu.cct.parallelsuite.sets.LazySet;
@@ -92,7 +91,6 @@ public class TestMaps {
         // Sanity check: Standard Java implementation
         testMap(ConcurrentHashMap::new);
 
-        testMap(LockHashMap::new);
         testMap(() -> new SetBasedMap<>(FineGrainedSet::new));
         testMap(() -> new SetBasedMap<>(OptimisticSet::new));
         testMap(() -> new SetBasedMap<>(LazySet::new));
