@@ -23,10 +23,10 @@ namespace parallel_suite::sets {
             const auto key = std::hash<T>{}(t);
 
             std::unique_lock predecessorLock(head->mutex);
-            std::unique_lock currentLock(head->next.load()->mutex);
-
             std::shared_ptr<MyNode> predecessor = head;
-            std::shared_ptr<MyNode> current = head->next;
+
+            std::unique_lock currentLock(predecessor->next.load()->mutex);
+            std::shared_ptr<MyNode> current = predecessor->next;
 
             while (current->next.load()
                     && current->key <= key
@@ -37,7 +37,10 @@ namespace parallel_suite::sets {
                 currentLock = std::unique_lock(current->mutex);
             }
 
-            return callback(predecessor, current);
+            auto r = callback(predecessor, current);
+            currentLock.unlock();
+            predecessorLock.unlock();
+            return r;
         }
 
     public:
