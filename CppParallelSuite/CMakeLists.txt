@@ -39,7 +39,8 @@ add_executable(TestLocks
         threadlocal/ThreadLocalRand.cpp
         threadlocal/ThreadId.cpp
         locks/IdLock.hpp
-        locks/TIdLock.hpp)
+        locks/TIdLock.hpp
+        locks/TwoCounterLock.hpp)
 
 add_executable(TestSets
         bench/test/TestSets.cpp

@@ -1,7 +1,5 @@
 package edu.lsu.cct.parallelsuite.locks;
 
-import edu.lsu.cct.parallelsuite.ThreadId;
-
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class TwoCounterLock implements SlimLock {

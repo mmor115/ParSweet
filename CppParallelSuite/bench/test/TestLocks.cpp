@@ -11,6 +11,7 @@
 #include "../../locks/BackoffLock.hpp"
 #include "../../locks/CLHLock.hpp"
 #include "../../locks/MCSLock.hpp"
+#include "../../locks/TwoCounterLock.hpp"
 
 namespace parallel_test::locks {
     using namespace parallel_suite;
@@ -79,7 +80,8 @@ int main() {
             CLHLock,
             MCSLock,
             IdLock,
-            TIdLock
+            TIdLock,
+            TwoCounterLock
     >();
 
     return ok ? 0
