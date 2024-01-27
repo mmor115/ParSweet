@@ -5,48 +5,64 @@
 #include <mutex>
 #include <array>
 #include <condition_variable>
-#include "NodeHead.hpp"
 #include "../KeyType.hpp"
 #include "../Types.hpp"
 #include "../MutexType.hpp"
 
-namespace parallel_suite::lock_hash_map {
+namespace parallel_suite::maps {
 
     template <KeyType K, typename V, usize NumBuckets, MutexType Mutex=std::mutex>
     class LockHashMap {
+        class Node {
+        public:
+            const K key;
+            V value;
+            std::unique_ptr<Node> next;
+
+            Node(K key, V value) : key(key), value(value), next(nullptr) { }
+        };
+
+        class NodeHead {
+        public:
+            Mutex mutex;
+            std::unique_ptr<Node> head;
+
+            NodeHead() : mutex(), head(nullptr) { }
+        };
+
     private:
-        using MyNodeHead = NodeHead<K, V, Mutex>;
-        using MyNode = Node<K, V>;
+        using MyNodeHead = NodeHead;
+        using MyNode = Node;
 
-        std::array<std::shared_ptr<MyNodeHead>, NumBuckets> buckets;
+        std::array<std::unique_ptr<MyNodeHead>, NumBuckets> buckets;
 
-        std::shared_ptr<MyNodeHead> getNodeHead(usize index) {
-            return buckets[index];
+        MyNodeHead* getNodeHead(usize index, std::unique_lock<Mutex>& lock) {
+            lock = std::unique_lock(buckets[index]->mutex);
+            return buckets[index].get();
         }
 
         usize getBucketIndexOfKey(K key) {
-            return std::hash<K>{}(key) % NumBuckets - 1;
+            return std::hash<K>{}(key) % (NumBuckets - 1);
         }
 
     public:
         LockHashMap() : buckets() {
             for (usize i = 0; i < NumBuckets; ++i) {
-                buckets[i] = std::make_shared<MyNodeHead>();
+                buckets[i] = std::make_unique<MyNodeHead>();
             }
         }
 
         bool put(K key, V value, V& oldValue) {
             auto index = getBucketIndexOfKey(key);
-            std::shared_ptr<MyNode> newNode = std::make_shared<MyNode>(key, value);
-            std::shared_ptr<MyNodeHead> nodeHead = getNodeHead(index);
 
-            std::lock_guard headLock(nodeHead->mutex);
+            std::unique_lock<Mutex> headLock{};
+            MyNodeHead* nodeHead = getNodeHead(index, headLock);
 
-            std::shared_ptr<MyNode> h = nodeHead->head;
+            MyNode* h = nodeHead->head.get();
             if (!h) {
-                nodeHead->head = newNode;
+                nodeHead->head = std::make_unique<MyNode>(key, value);
             } else {
-                std::shared_ptr<MyNode> current = h;
+                MyNode* current = h;
 
                 while (true) {
                     if (current->key == key) {
@@ -56,13 +72,13 @@ namespace parallel_suite::lock_hash_map {
                     }
 
                     if (current->next) {
-                        current = current->next;
+                        current = current->next.get();
                     } else {
                         break;
                     }
                 }
 
-                current->next = newNode;
+                current->next = std::make_unique<MyNode>(key, value);
             }
 
             return false;
@@ -70,23 +86,23 @@ namespace parallel_suite::lock_hash_map {
 
         bool get(K key, V& outValue) {
             auto index = getBucketIndexOfKey(key);
-            auto nodeHead = getNodeHead(index);
 
-            std::lock_guard headLock(nodeHead->mutex);
+            std::unique_lock<Mutex> headLock{};
+            auto nodeHead = getNodeHead(index, headLock);
 
-            std::shared_ptr<MyNode> h = nodeHead->head;
+            MyNode* h = nodeHead->head.get();
             if (!h) {
                 return false;
             }
 
-            std::shared_ptr<MyNode> current = h;
+            MyNode* current = h;
 
             while (current) {
                 if (current->key == key) {
                     outValue = current->value;
                     return true;
                 }
-                current = current->next;
+                current = current->next.get();
             }
 
             return false;
@@ -94,36 +110,37 @@ namespace parallel_suite::lock_hash_map {
 
         bool del(K key) {
             auto index = getBucketIndexOfKey(key);
-            std::shared_ptr<MyNodeHead> nodeHead = getNodeHead(index);
 
-            std::lock_guard headLock(nodeHead->mutex);
+            std::unique_lock<Mutex> headLock{};
+            MyNodeHead* nodeHead = getNodeHead(index, headLock);
 
-            std::shared_ptr<MyNode> h = nodeHead->head;
+            MyNode* h = nodeHead->head.get();
             if (!h) {
                 return false;
             }
 
-            std::shared_ptr<MyNode> current = h, prev = {nullptr};
+            MyNode* current = h;
+            MyNode* prev = nullptr;
             while (current) {
                 if (current->key == key) {
                     if (!prev) {
-                        nodeHead->head = current->next;
+                        nodeHead->head = std::move(current->next);
                     } else {
-                        prev->next = current->next;
+                        prev->next = std::move(current->next);
                     }
 
                     return true;
                 }
 
                 prev = current;
-                current = current->next;
+                current = current->next.get();
             }
 
             return false;
         }
 
     };
-} // parallel_suite::lock_hash_map
+} // parallel_suite::maps
 
 
 #endif //LOCKHASHMAP_HPP

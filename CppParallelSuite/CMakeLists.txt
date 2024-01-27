@@ -51,6 +51,11 @@ add_executable(TestSets
         sets/SetNode.hpp
         sets/SetTypes.hpp)
 
+add_executable(TestMaps
+        bench/test/TestMaps.cpp
+        maps/LockHashMap.hpp
+        maps/MapTypes.hpp)
+
 link_libraries(Threads::Threads)
 
 enable_testing()
@@ -61,3 +66,5 @@ add_test(NAME TestBarrier
          COMMAND ./TestBarrier)
 add_test(NAME TestSets
          COMMAND ./TestSets)
+add_test(NAME TestMaps
+         COMMAND ./TestMaps)
