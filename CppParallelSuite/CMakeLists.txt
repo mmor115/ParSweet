@@ -63,6 +63,11 @@ add_executable(BenchLocks
         threadlocal/ThreadId.cpp
         threadlocal/ThreadLocalRand.cpp)
 
+add_executable(BenchSets
+        bench/Bench.hpp
+        bench/BenchSets.cpp
+        bench/BlackBox.hpp)
+
 link_libraries(Threads::Threads)
 
 enable_testing()
