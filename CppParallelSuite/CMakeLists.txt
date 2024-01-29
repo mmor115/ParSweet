@@ -57,6 +57,12 @@ add_executable(TestMaps
         maps/MapTypes.hpp
         maps/SetBasedMap.hpp)
 
+add_executable(BenchLocks
+        bench/Bench.hpp
+        bench/BenchLocks.cpp
+        threadlocal/ThreadId.cpp
+        threadlocal/ThreadLocalRand.cpp)
+
 link_libraries(Threads::Threads)
 
 enable_testing()
