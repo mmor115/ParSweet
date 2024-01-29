@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <thread>
+#include <mutex>
 #include "../MutexType.hpp"
 #include "../locks/ALock.hpp"
 #include "../locks/IdLock.hpp"
@@ -82,6 +83,10 @@ int main() {
 
     writeBenchResult(params, "TwoCounterLock", measure([&params]() {
         benchLock<TwoCounterLock>(params.getNThreads(), params.getWorkPerThread());
+    }));
+
+    writeBenchResult(params, "std::mutex", measure([&params]() {
+        benchLock<std::mutex>(params.getNThreads(), params.getWorkPerThread());
     }));
 
     return 0;

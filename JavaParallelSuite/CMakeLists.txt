@@ -12,7 +12,7 @@ set(CMAKE_JAVA_COMPILE_FLAGS "-source" "1.10" "-target" "1.10")
 add_jar(ParallelSuite 
     ./src/edu/lsu/cct/parallelsuite/Barrier.java 
     ./src/edu/lsu/cct/parallelsuite/ThreadId.java 
-    ./src/edu/lsu/cct/parallelsuite/bench/test/Misc.java
+    ./src/edu/lsu/cct/parallelsuite/bench/Misc.java
     ./src/edu/lsu/cct/parallelsuite/bench/test/TestToySoldiers.java
     ./src/edu/lsu/cct/parallelsuite/bench/test/TestBarrier.java
     ./src/edu/lsu/cct/parallelsuite/bench/test/TestSets.java
@@ -20,6 +20,7 @@ add_jar(ParallelSuite
     ./src/edu/lsu/cct/parallelsuite/bench/test/TestMaps.java
     ./src/edu/lsu/cct/parallelsuite/maps/SlimMap.java
     ./src/edu/lsu/cct/parallelsuite/maps/SetBasedMap.java
+    ./src/edu/lsu/cct/parallelsuite/maps/LockHashMap.java
     ./src/edu/lsu/cct/parallelsuite/ToySoldiersSim.java
     ./src/edu/lsu/cct/parallelsuite/sets/FindCallback.java
     ./src/edu/lsu/cct/parallelsuite/sets/FineGrainedSet.java
