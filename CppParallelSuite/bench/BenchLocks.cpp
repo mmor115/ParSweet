@@ -89,5 +89,9 @@ int main() {
         benchLock<std::mutex>(params.getNThreads(), params.getWorkPerThread());
     }));
 
+    writeBenchResult(params, "std::recurive_mutex", measure([&params]() {
+        benchLock<std::recursive_mutex>(params.getNThreads(), params.getWorkPerThread());
+    }));
+
     return 0;
 }
