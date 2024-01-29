@@ -12,7 +12,7 @@
 
 namespace parallel_suite::sets {
 
-    template <OrderedKeyType T, MutexType Mutex=std::mutex>
+    template <KeyType T, MutexType Mutex=std::mutex>
     class LazySet {
     private:
         using MyNode = AtomicMarkableNode<T, Mutex>;

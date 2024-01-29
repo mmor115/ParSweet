@@ -54,7 +54,8 @@ add_executable(TestSets
 add_executable(TestMaps
         bench/test/TestMaps.cpp
         maps/LockHashMap.hpp
-        maps/MapTypes.hpp)
+        maps/MapTypes.hpp
+        maps/SetBasedMap.hpp)
 
 link_libraries(Threads::Threads)
 

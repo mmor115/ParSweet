@@ -11,7 +11,7 @@
 
 namespace parallel_suite::maps {
 
-    template <KeyType K, typename V, usize NumBuckets, MutexType Mutex=std::mutex>
+    template <KeyType K, typename V, usize NumBuckets = 16, MutexType Mutex = std::mutex>
     class LockHashMap {
         class Node {
         public:

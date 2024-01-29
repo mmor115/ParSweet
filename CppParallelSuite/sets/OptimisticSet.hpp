@@ -13,7 +13,7 @@
 
 namespace parallel_suite::sets {
 
-    template <OrderedKeyType T, MutexType Mutex=std::mutex>
+    template <KeyType T, MutexType Mutex=std::mutex>
     class OptimisticSet {
     private:
         using MyNode = AtomicNode<T, Mutex>;

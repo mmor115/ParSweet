@@ -4,6 +4,10 @@
 
 #include "../../maps/MapTypes.hpp"
 #include "../../maps/LockHashMap.hpp"
+#include "../../maps/SetBasedMap.hpp"
+#include "../../sets/OptimisticSet.hpp"
+#include "../../sets/LazySet.hpp"
+#include "../../sets/FineGrainedSet.hpp"
 
 #define TEST_X if (!x) { return false; }
 #define TEST_NOT_X if (x) { return false; }
@@ -90,7 +94,10 @@ using namespace parallel_test::maps;
 
 int main() {
     bool ok = testAs<
-            LockHashMap<int, int, 16>
+            LockHashMap<int, int>,
+            SetBasedMap<int, int, sets::FineGrainedSet>,
+            SetBasedMap<int, int, sets::OptimisticSet>,
+            SetBasedMap<int, int, sets::LazySet>
     >();
     return ok ? 0
               : 0xBAD;
