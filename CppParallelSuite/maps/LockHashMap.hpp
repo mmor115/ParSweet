@@ -52,7 +52,7 @@ namespace parallel_suite::maps {
             }
         }
 
-        bool put(K key, V value, V& oldValue) {
+        bool put(K key, V value) {
             auto index = getBucketIndexOfKey(key);
 
             std::unique_lock<Mutex> headLock{};
@@ -66,7 +66,6 @@ namespace parallel_suite::maps {
 
                 while (true) {
                     if (current->key == key) {
-                        oldValue = current->value;
                         current->value = value;
                         return true;
                     }
@@ -81,7 +80,7 @@ namespace parallel_suite::maps {
                 current->next = std::make_unique<MyNode>(key, value);
             }
 
-            return false;
+            return true;
         }
 
         bool get(K key, V& outValue) {

@@ -29,8 +29,8 @@ namespace parallel_test::maps {
                 for (int i = 0; i < WorkSize; ++i) {
                     auto token = i * Threads + threadId;
 
-                    x = theMap.put(token, token, out);
-                    TEST_NOT_X;
+                    x = theMap.put(token, token);
+                    TEST_X;
                     x = theMap.get(token, out);
                     TEST_X;
                     x = token == out;
@@ -43,8 +43,8 @@ namespace parallel_test::maps {
 
                 for (int i = 0; i < WorkSize; i++) {
                     auto token = i * Threads + threadId;
-                    x = theMap.put(token, token, out);
-                    TEST_NOT_X;
+                    x = theMap.put(token, token);
+                    TEST_X;
                 }
 
                 for (int i = 0; i < WorkSize; i++) {
