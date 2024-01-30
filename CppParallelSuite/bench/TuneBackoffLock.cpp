@@ -4,6 +4,7 @@
 #include <cassert>
 #include <vector>
 #include <thread>
+#include <optional>
 #include "../MutexType.hpp"
 #include "../locks/BackoffLock.hpp"
 #include "BlackBox.hpp"
