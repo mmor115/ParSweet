@@ -3,6 +3,11 @@
 #include <vector>
 #include <thread>
 #include <mutex>
+#if __has_include(<hpx/hpx_main.hpp>)
+  #include <hpx/hpx.hpp>
+  #include <hpx/hpx_main.hpp>
+  #define HAVE_HPX 1
+#endif
 #include "../MutexType.hpp"
 #include "../locks/ALock.hpp"
 #include "../locks/IdLock.hpp"
@@ -30,6 +35,24 @@ namespace parallel_bench::locks {
     template <MutexType M>
     void benchLock(usize const& nThreads, usize const& countTo) {
         std::vector<std::thread> workers;
+
+        usize counter = 0;
+        M theMutex;
+
+        for (int threadId = 0; threadId < nThreads; ++threadId) {
+            workers.emplace_back(work<M>, std::cref(countTo), std::ref(counter), std::ref(theMutex));
+        }
+
+        for (auto&& worker : workers) {
+            worker.join();
+        }
+
+        blackBox(counter);
+    }
+
+    template <MutexType M>
+    void benchHpxLock(usize const& nThreads, usize const& countTo) {
+        std::vector<hpx::thread> workers;
 
         usize counter = 0;
         M theMutex;
@@ -95,6 +118,12 @@ int main() {
     writeBenchResult(params, "std::recurive_mutex", measure([&params]() {
         benchLock<std::recursive_mutex>(params.getNThreads(), params.getWorkPerThread());
     }));
+
+#if HAVE_HPX
+    writeBenchResult(params, "hpx::mutex", measure([&params]() {
+        benchHpxLock<hpx::mutex>(params.getNThreads(), params.getWorkPerThread());
+    }));
+#endif
 
     return 0;
 }

@@ -21,6 +21,8 @@ endif()
 
 find_package(Threads REQUIRED)
 
+find_package(HPX REQUIRED)
+
 add_executable(TestBarrier
         barrier/Barrier.hpp
         bench/test/TestBarrier.cpp)
@@ -57,11 +59,18 @@ add_executable(TestMaps
         maps/MapTypes.hpp
         maps/SetBasedMap.hpp)
 
-add_executable(BenchLocks
+if(HPX_FOUND)
+  add_hpx_executable(BenchLocks
+        SOURCES bench/BenchLocks.cpp
+        threadlocal/ThreadId.cpp
+        threadlocal/ThreadLocalRand.cpp)
+else()
+  add_executable(BenchLocks
         bench/Bench.hpp
         bench/BenchLocks.cpp
         threadlocal/ThreadId.cpp
         threadlocal/ThreadLocalRand.cpp)
+endif()
 
 add_executable(TuneBackoffLock
         bench/Bench.hpp
