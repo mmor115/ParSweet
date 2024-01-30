@@ -74,6 +74,11 @@ add_executable(BenchSets
         bench/BenchSets.cpp
         bench/BlackBox.hpp)
 
+add_executable(BenchMaps
+        bench/Bench.hpp
+        bench/BenchMaps.cpp
+        bench/BlackBox.hpp)
+
 link_libraries(Threads::Threads)
 
 enable_testing()
