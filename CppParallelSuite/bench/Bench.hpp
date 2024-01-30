@@ -90,11 +90,11 @@ namespace parallel_bench {
     }
 
     template <typename D>
-    inline auto countDuration(Duration_t duration) {
+    inline auto countDuration(Duration_t const& duration) {
         return std::chrono::duration_cast<D>(duration).count();
     }
 
-    void writeBenchResult(BenchParameters const& params, std::string const& specific, Duration_t duration) {
+    void writeBenchResult(BenchParameters const& params, std::string const& specific, Duration_t const& duration) {
         static constexpr auto outPath{"psweet.csv"};
 
         std::ofstream f;

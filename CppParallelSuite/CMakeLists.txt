@@ -63,6 +63,12 @@ add_executable(BenchLocks
         threadlocal/ThreadId.cpp
         threadlocal/ThreadLocalRand.cpp)
 
+add_executable(TuneBackoffLock
+        bench/Bench.hpp
+        bench/TuneBackoffLock.cpp
+        threadlocal/ThreadId.cpp
+        threadlocal/ThreadLocalRand.cpp)
+
 add_executable(BenchSets
         bench/Bench.hpp
         bench/BenchSets.cpp

@@ -27,7 +27,7 @@ namespace parallel_suite::locks {
                 if (!aBool.exchange(true)) {
                     return;
                 } else {
-                    auto delay = std::chrono::milliseconds(ThreadLocalRand::intRand.getRand(0, delayLimit));
+                    auto delay = std::chrono::milliseconds(parallel_suite::threadlocal::ThreadLocalRand::intRand.getRand(0, delayLimit));
                     delayLimit = std::min(MaxDelay, 2 * delayLimit);
                     std::this_thread::sleep_for(delay);
                 }

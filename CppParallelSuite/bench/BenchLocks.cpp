@@ -13,6 +13,7 @@
 #include "../locks/CLHLock.hpp"
 #include "../locks/MCSLock.hpp"
 #include "../locks/TwoCounterLock.hpp"
+#include "BlackBox.hpp"
 
 namespace parallel_bench::locks {
     using namespace parallel_suite;
@@ -40,6 +41,8 @@ namespace parallel_bench::locks {
         for (auto&& worker : workers) {
             worker.join();
         }
+
+        blackBox(counter);
     }
 } // parallel_bench::locks
 
