@@ -81,46 +81,57 @@ int main() {
     writeBenchResult(params, "ALock<100>", measure([&params]() {
         benchLock<ALock<100>>(params.getNThreads(), params.getWorkPerThread());
     }));
+    params.coolOff();
 
     writeBenchResult(params, "BackoffLock<1:17>", measure([&params]() {
         benchLock<BackoffLock<1, 17>>(params.getNThreads(), params.getWorkPerThread());
     }));
+    params.coolOff();
 
     writeBenchResult(params, "CLHLock", measure([&params]() {
         benchLock<CLHLock>(params.getNThreads(), params.getWorkPerThread());
     }));
+    params.coolOff();
 
     writeBenchResult(params, "IdLock", measure([&params]() {
         benchLock<IdLock>(params.getNThreads(), params.getWorkPerThread());
     }));
+    params.coolOff();
 
     writeBenchResult(params, "MCSLock", measure([&params]() {
         benchLock<MCSLock>(params.getNThreads(), params.getWorkPerThread());
     }));
+    params.coolOff();
 
     writeBenchResult(params, "TASLock", measure([&params]() {
         benchLock<TASLock>(params.getNThreads(), params.getWorkPerThread());
     }));
+    params.coolOff();
 
     writeBenchResult(params, "TIdLock", measure([&params]() {
         benchLock<TIdLock>(params.getNThreads(), params.getWorkPerThread());
     }));
+    params.coolOff();
 
     writeBenchResult(params, "TTASLock", measure([&params]() {
         benchLock<TTASLock>(params.getNThreads(), params.getWorkPerThread());
     }));
+    params.coolOff();
 
     writeBenchResult(params, "TwoCounterLock", measure([&params]() {
         benchLock<TwoCounterLock>(params.getNThreads(), params.getWorkPerThread());
     }));
+    params.coolOff();
 
     writeBenchResult(params, "std::mutex", measure([&params]() {
         benchLock<std::mutex>(params.getNThreads(), params.getWorkPerThread());
     }));
+    params.coolOff();
 
     writeBenchResult(params, "std::recurive_mutex", measure([&params]() {
         benchLock<std::recursive_mutex>(params.getNThreads(), params.getWorkPerThread());
     }));
+    params.coolOff();
 
 #if HAVE_HPX
     writeBenchResult(params, "hpx::mutex", measure([&params]() {

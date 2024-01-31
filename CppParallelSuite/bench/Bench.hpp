@@ -9,6 +9,7 @@
 #include <filesystem>
 #include <fstream>
 #include <iostream>
+#include <thread>
 #include "../Types.hpp"
 
 namespace parallel_bench {
@@ -20,6 +21,7 @@ namespace parallel_bench {
         std::string machine{};
         usize nThreads{};
         usize workPerThread{};
+        usize cooldown{};
 
 #ifdef NDEBUG
         static constexpr bool debug{false};
@@ -30,13 +32,13 @@ namespace parallel_bench {
         BenchParameters(std::string lang, std::string category) : lang(std::move(lang)),
                                                                   category(std::move(category)) {
             if (auto* szNThreads = std::getenv("PSWEET_NTHREADS")) {
-                nThreads = std::strtoll(szNThreads, nullptr, 10);
+                nThreads = std::strtoull(szNThreads, nullptr, 10);
             } else {
                 throw std::runtime_error("bad PSWEET_NTHREADS");
             }
 
             if (auto* szWorkPerThread = std::getenv("PSWEET_WORK_PER_THREAD")) {
-                workPerThread = std::strtoll(szWorkPerThread, nullptr, 10);
+                workPerThread = std::strtoull(szWorkPerThread, nullptr, 10);
             } else {
                 throw std::runtime_error("bad PSWEET_WORK_PER_THREAD");
             }
@@ -45,6 +47,12 @@ namespace parallel_bench {
                 machine = szMachine;
             } else {
                 throw std::runtime_error("bad PSWEET_MACHINE");
+            }
+
+            if (auto* szCooldown = std::getenv("PSWEET_COOLDOWN")) {
+                cooldown = std::strtoull(szCooldown, nullptr, 10);
+            } else {
+                cooldown = 0;
             }
         }
 
@@ -76,6 +84,12 @@ namespace parallel_bench {
         [[nodiscard]]
         inline static consteval bool getDebug() {
             return debug;
+        }
+
+        inline void coolOff() const {
+            if (cooldown > 0) {
+                std::this_thread::sleep_for(std::chrono::milliseconds(cooldown));
+            }
         }
     };
 
