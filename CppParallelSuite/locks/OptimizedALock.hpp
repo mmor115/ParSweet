@@ -11,19 +11,19 @@
 namespace parallel_suite::locks {
     using namespace threadlocal;
 
-    template <typename T>
-    struct alignas(std::hardware_destructive_interference_size) Cell {
-        T data;
-
-        Cell() : data() { }
-
-        T& operator*() {
-            return data;
-        }
-    };
-
     template <usize ThreadCount>
     class OptimizedALock {
+        template <typename T>
+        struct alignas(std::hardware_destructive_interference_size) Cell {
+            T data;
+
+            Cell() : data() { }
+
+            T& operator*() {
+                return data;
+            }
+        };
+
     private:
         ThreadLocal<usize> mySlotIndex;
         std::atomic<usize> tail;
