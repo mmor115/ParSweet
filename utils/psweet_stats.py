@@ -3,18 +3,33 @@ import csv
 
 class Stat:
     def __init__(self):
-        self.val = 0
-        self.val2 = 0
-        self.n = 0
+        self.values = []
+        self.trimmed = False
     def add(self, v):
-        self.val += v
-        self.val2 += v**2
-        self.n += 1
+        assert not self.trimmed
+        self.values.append(v)
+    def trim(self):
+        """ Get rid of outliers """
+        assert not self.trimmed
+        self.trimmed = True
+        self.values = sorted(self.values)
+        n = len(self.values)//10
+        if n > 1:
+            self.values = self.values[n:-n]
     def stats(self):
-        avg = self.val/self.n
-        avg2 = self.val2/self.n
+        val = 0
+        val2 =  0
+        n = 0
+        for v in self.values:
+            val += v
+            val2 += v**2
+            n += 1
+        if n == 0:
+            n = 1
+        avg = val/n
+        avg2 = val2/n
         sdev = sqrt(avg2-avg**2)
-        return avg, sdev, self.n
+        return avg, sdev, n
 
 with open('psweet.csv', 'r') as csvfile:
     reader = csv.DictReader(csvfile)
@@ -25,9 +40,14 @@ with open('psweet.csv', 'r') as csvfile:
             locks[lock] = Stat()
         ms = int(row['ms'])
         locks[lock].add(ms)
+
+    for lock in locks:
+        locks[lock].trim()
+
     def fk(x):
         return locks[x].stats()[0]
     slocks = sorted(list(locks.keys()), key=fk)
+
     print("%20s %6s %6s %3s" % ("lock", "avg", "sdev", "n"))
     for lock in slocks:
         stats = locks[lock].stats()
