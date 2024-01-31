@@ -20,7 +20,13 @@ if (DEFINED ENV{UBSAN})
 endif()
 
 find_package(Threads REQUIRED)
+
 find_package(HPX QUIET)
+if (HPX_FOUND)
+    add_compile_definitions(HAVE_HPX=1)
+else()
+    add_compile_definitions(HAVE_HPX=0)
+endif()
 
 add_executable(TestBarrier
         barrier/Barrier.hpp

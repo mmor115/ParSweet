@@ -3,10 +3,9 @@
 #include <vector>
 #include <thread>
 #include <mutex>
-#if __has_include(<hpx/hpx_main.hpp>)
+#if HAVE_HPX
   #include <hpx/hpx.hpp>
   #include <hpx/hpx_main.hpp>
-  #define HAVE_HPX 1
 #endif
 #include "../MutexType.hpp"
 #include "../locks/ALock.hpp"
