@@ -3,6 +3,7 @@
 #include <thread>
 #include <mutex>
 #include "../../locks/ALock.hpp"
+#include "../../locks/OptimizedALock.hpp"
 #include "../../locks/IdLock.hpp"
 #include "../../locks/TIdLock.hpp"
 #include "../../locks/TASLock.hpp"
@@ -76,6 +77,7 @@ int main() {
             TASLock,
             TTASLock,
             ALock<Threads>,
+            OptimizedALock<Threads>,
             BackoffLock<>,
             CLHLock,
             MCSLock,

@@ -9,6 +9,7 @@
 #endif
 #include "../MutexType.hpp"
 #include "../locks/ALock.hpp"
+#include "../locks/OptimizedALock.hpp"
 #include "../locks/IdLock.hpp"
 #include "../locks/TIdLock.hpp"
 #include "../locks/TASLock.hpp"
@@ -83,6 +84,11 @@ int main() {
     }));
     params.coolOff();
 
+    writeBenchResult(params, "OptimizedALock<100>", measure([&params]() {
+        benchLock<OptimizedALock<100>>(params.getNThreads(), params.getWorkPerThread());
+    }));
+    params.coolOff();
+
     writeBenchResult(params, "BackoffLock<1:17>", measure([&params]() {
         benchLock<BackoffLock<1, 17>>(params.getNThreads(), params.getWorkPerThread());
     }));
@@ -128,7 +134,7 @@ int main() {
     }));
     params.coolOff();
 
-    writeBenchResult(params, "std::recurive_mutex", measure([&params]() {
+    writeBenchResult(params, "std::recursive_mutex", measure([&params]() {
         benchLock<std::recursive_mutex>(params.getNThreads(), params.getWorkPerThread());
     }));
     params.coolOff();

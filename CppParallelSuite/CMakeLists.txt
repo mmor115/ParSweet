@@ -3,9 +3,19 @@ project(CppParallelSuite)
 
 set(CMAKE_CXX_STANDARD 20)
 
-set(THREADS_PREFER_PTHREAD_FLAG ON)
+include(CheckCXXCompilerFlag)
 
-set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-pthread")
+check_cxx_compiler_flag(-Winterference-size HAVE_W_INTERFERENCE_SIZE)
+if (HAVE_W_INTERFERENCE_SIZE)
+    add_compile_options(-Wno-interference-size)
+endif()
+
+check_cxx_compiler_flag(-pthread HAVE_PTHREAD)
+if (HAVE_PTHREAD)
+    set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-pthread")
+endif ()
+
+set(THREADS_PREFER_PTHREAD_FLAG ON)
 
 if (DEFINED ENV{ASAN})
     add_compile_options(-fsanitize=address)
@@ -47,7 +57,8 @@ add_executable(TestLocks
         threadlocal/ThreadId.cpp
         locks/IdLock.hpp
         locks/TIdLock.hpp
-        locks/TwoCounterLock.hpp)
+        locks/TwoCounterLock.hpp
+        locks/OptimizedALock.hpp)
 
 add_executable(TestSets
         bench/test/TestSets.cpp
