@@ -50,6 +50,7 @@ namespace parallel_bench::locks {
         blackBox(counter);
     }
 
+#if HAVE_HPX
     template <MutexType M>
     void benchHpxLock(usize const& nThreads, usize const& countTo) {
         std::vector<hpx::thread> workers;
@@ -67,7 +68,10 @@ namespace parallel_bench::locks {
 
         blackBox(counter);
     }
+#endif
+
 } // parallel_bench::locks
+
 
 using namespace parallel_bench;
 using namespace parallel_bench::locks;

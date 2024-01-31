@@ -20,8 +20,7 @@ if (DEFINED ENV{UBSAN})
 endif()
 
 find_package(Threads REQUIRED)
-
-find_package(HPX REQUIRED)
+find_package(HPX QUIET)
 
 add_executable(TestBarrier
         barrier/Barrier.hpp
