@@ -3,6 +3,9 @@
 #include <vector>
 #include <thread>
 #include <mutex>
+#include <unordered_map>
+#include <functional>
+
 #if HAVE_HPX
   #include <hpx/hpx.hpp>
   #include <hpx/hpx_main.hpp>
@@ -76,74 +79,53 @@ namespace parallel_bench::locks {
 using namespace parallel_bench;
 using namespace parallel_bench::locks;
 
+template <typename L>
+constexpr auto benchLockWrapper() {
+    return [](BenchParameters const& params) {
+        benchLock<L>(params.getNThreads(), params.getWorkPerThread());
+    };
+}
+
+#if HAVE_HPX
+template <typename L>
+constexpr auto benchHpxLockWrapper() {
+    return [](BenchParameters const& params) {
+        benchHpxLock<L>(params.getNThreads(), params.getWorkPerThread());
+    };
+}
+#endif
+
+std::unordered_map<std::string, std::function<void(BenchParameters const&)>> tests {
+        {"ALock<100>", benchLockWrapper<ALock<100>>()},
+        {"OptimizedALock<100>", benchLockWrapper<OptimizedALock<100>>()},
+        {"BackoffLock<1:17>", benchLockWrapper<BackoffLock<1, 17>>()},
+        {"IdLock", benchLockWrapper<IdLock>()},
+        {"TIdLock", benchLockWrapper<TIdLock>()},
+        {"CLHLock", benchLockWrapper<CLHLock>()},
+        {"MCSLock", benchLockWrapper<MCSLock>()},
+        {"TASLock", benchLockWrapper<TASLock>()},
+        {"TTASLock", benchLockWrapper<TTASLock>()},
+        {"TwoCounterLock", benchLockWrapper<TwoCounterLock>()},
+        {"std::mutex", benchLockWrapper<std::mutex>()},
+        {"std::recursive_mutex", benchLockWrapper<std::recursive_mutex>()}
+#if HAVE_HPX
+        ,{"hpx::mutex", benchHpxLockWrapper<hpx::mutex>()}
+#endif
+};
+
 int main() {
     BenchParameters params("c++", "locks");
 
-    writeBenchResult(params, "ALock<100>", measure([&params]() {
-        benchLock<ALock<100>>(params.getNThreads(), params.getWorkPerThread());
-    }));
-    params.coolOff();
-
-    writeBenchResult(params, "OptimizedALock<100>", measure([&params]() {
-        benchLock<OptimizedALock<100>>(params.getNThreads(), params.getWorkPerThread());
-    }));
-    params.coolOff();
-
-    writeBenchResult(params, "BackoffLock<1:17>", measure([&params]() {
-        benchLock<BackoffLock<1, 17>>(params.getNThreads(), params.getWorkPerThread());
-    }));
-    params.coolOff();
-
-    writeBenchResult(params, "CLHLock", measure([&params]() {
-        benchLock<CLHLock>(params.getNThreads(), params.getWorkPerThread());
-    }));
-    params.coolOff();
-
-    writeBenchResult(params, "IdLock", measure([&params]() {
-        benchLock<IdLock>(params.getNThreads(), params.getWorkPerThread());
-    }));
-    params.coolOff();
-
-    writeBenchResult(params, "MCSLock", measure([&params]() {
-        benchLock<MCSLock>(params.getNThreads(), params.getWorkPerThread());
-    }));
-    params.coolOff();
-
-    writeBenchResult(params, "TASLock", measure([&params]() {
-        benchLock<TASLock>(params.getNThreads(), params.getWorkPerThread());
-    }));
-    params.coolOff();
-
-    writeBenchResult(params, "TIdLock", measure([&params]() {
-        benchLock<TIdLock>(params.getNThreads(), params.getWorkPerThread());
-    }));
-    params.coolOff();
-
-    writeBenchResult(params, "TTASLock", measure([&params]() {
-        benchLock<TTASLock>(params.getNThreads(), params.getWorkPerThread());
-    }));
-    params.coolOff();
-
-    writeBenchResult(params, "TwoCounterLock", measure([&params]() {
-        benchLock<TwoCounterLock>(params.getNThreads(), params.getWorkPerThread());
-    }));
-    params.coolOff();
-
-    writeBenchResult(params, "std::mutex", measure([&params]() {
-        benchLock<std::mutex>(params.getNThreads(), params.getWorkPerThread());
-    }));
-    params.coolOff();
-
-    writeBenchResult(params, "std::recursive_mutex", measure([&params]() {
-        benchLock<std::recursive_mutex>(params.getNThreads(), params.getWorkPerThread());
-    }));
-    params.coolOff();
-
-#if HAVE_HPX
-    writeBenchResult(params, "hpx::mutex", measure([&params]() {
-        benchHpxLock<hpx::mutex>(params.getNThreads(), params.getWorkPerThread());
-    }));
-#endif
+    auto which = params.getWhich();
+    if (which && tests.contains(*which)) {
+        writeBenchResult(params, *which, measure(tests[*which], params));
+        params.coolOff();
+    } else {
+        for (auto& pair : tests) {
+            writeBenchResult(params, pair.first, measure(pair.second, params));
+            params.coolOff();
+        }
+    }
 
     return 0;
 }

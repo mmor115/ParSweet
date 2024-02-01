@@ -19,6 +19,7 @@ namespace parallel_bench {
         std::string lang;
         std::string category;
         std::string machine{};
+        std::optional<std::string> which{};
         usize nThreads{};
         usize workPerThread{};
         usize cooldown{};
@@ -54,6 +55,10 @@ namespace parallel_bench {
             } else {
                 cooldown = 0;
             }
+
+            if (auto* szWhich = std::getenv("PSWEET_WHICH")) {
+                which = szWhich;
+            }
         }
 
         [[nodiscard]]
@@ -79,6 +84,11 @@ namespace parallel_bench {
         [[nodiscard]]
         inline usize const& getWorkPerThread() const {
             return workPerThread;
+        }
+
+        [[nodiscard]]
+        std::optional<std::string> const& getWhich() const {
+            return which;
         }
 
         [[nodiscard]]
