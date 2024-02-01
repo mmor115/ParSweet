@@ -49,8 +49,8 @@ int main() {
 
     std::optional<std::tuple<std::string, Duration_t>> best(std::nullopt);
 
-    unrolledFor<1, 51>([&params, &best]<typename I>(I i) {
-        unrolledFor<I::value, 51>([&i=I::value, &params, &best](auto j) {
+    unrolledFor<1, 10>([&params, &best]<typename I>(I i) {
+        unrolledFor<I::value, 20>([&i=I::value, &params, &best](auto j) {
             std::string specific("BackoffLock");
             formatSpecific(specific, i, j);
 
@@ -59,6 +59,7 @@ int main() {
             });
 
             writeBenchResult(params, specific, d);
+            params.coolOff();
 
             if (!best || d < std::get<Duration_t>(*best)) {
                 best = std::make_tuple(std::move(specific), std::move(d));

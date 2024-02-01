@@ -10,6 +10,7 @@
 #include <fstream>
 #include <iostream>
 #include <thread>
+#include <optional>
 #include "../Types.hpp"
 
 namespace parallel_bench {
