@@ -67,7 +67,8 @@ add_executable(TestSets
         sets/LazySet.hpp
         sets/NodeMarkers.hpp
         sets/SetNode.hpp
-        sets/SetTypes.hpp)
+        sets/SetTypes.hpp
+        sets/LockHashSet.hpp)
 
 add_executable(TestMaps
         bench/test/TestMaps.cpp
@@ -97,7 +98,8 @@ add_executable(TuneBackoffLock
 add_executable(BenchSets
         bench/Bench.hpp
         bench/BenchSets.cpp
-        bench/BlackBox.hpp)
+        bench/BlackBox.hpp
+        sets/LockHashSet.hpp)
 
 add_executable(BenchMaps
         bench/Bench.hpp

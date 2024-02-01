@@ -2,6 +2,7 @@
 #include <vector>
 #include <mutex>
 #include <future>
+#include "../../sets/LockHashSet.hpp"
 #include "../../sets/FineGrainedSet.hpp"
 #include "../../sets/OptimisticSet.hpp"
 #include "../../sets/LazySet.hpp"
@@ -82,6 +83,7 @@ using namespace parallel_test::sets;
 
 int main() {
     bool ok = testAs<
+            LockHashSet<int, 16, std::mutex>,
             FineGrainedSet<int, std::mutex>,
             OptimisticSet<int, std::mutex>,
             LazySet<int, std::mutex>

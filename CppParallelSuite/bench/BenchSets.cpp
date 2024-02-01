@@ -3,6 +3,7 @@
 #include <vector>
 #include <future>
 
+#include "../sets/LockHashSet.hpp"
 #include "../sets/FineGrainedSet.hpp"
 #include "../sets/OptimisticSet.hpp"
 #include "../sets/LazySet.hpp"
@@ -59,6 +60,10 @@ using namespace parallel_bench::sets;
 
 int main() {
     BenchParameters params("c++", "sets");
+
+    writeBenchResult(params, "LockHashSet", measure([&params]() {
+        benchSet<LockHashSet<int>>(params.getNThreads(), params.getWorkPerThread());
+    }));
 
     writeBenchResult(params, "FineGrainedSet", measure([&params]() {
         benchSet<FineGrainedSet<int>>(params.getNThreads(), params.getWorkPerThread());
