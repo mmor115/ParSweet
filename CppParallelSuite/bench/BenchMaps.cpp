@@ -75,18 +75,22 @@ int main() {
     writeBenchResult(params, "LockHashMap", measure([&params]() {
         benchMap<LockHashMap<int, int>>(params.getNThreads(), params.getWorkPerThread());
     }));
+    params.coolOff();
 
     writeBenchResult(params, "SetBasedMap<FineGrainedSet>", measure([&params]() {
         benchMap<SetBasedMap<int, int, sets::FineGrainedSet>>(params.getNThreads(), params.getWorkPerThread());
     }));
+    params.coolOff();
 
     writeBenchResult(params, "SetBasedMap<OptimisticSet>", measure([&params]() {
         benchMap<SetBasedMap<int, int, sets::OptimisticSet>>(params.getNThreads(), params.getWorkPerThread());
     }));
+    params.coolOff();
 
     writeBenchResult(params, "SetBasedMap<LazySet>", measure([&params]() {
         benchMap<SetBasedMap<int, int, sets::LazySet>>(params.getNThreads(), params.getWorkPerThread());
     }));
+    params.coolOff();
 
     return 0;
 }

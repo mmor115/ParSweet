@@ -64,18 +64,22 @@ int main() {
     writeBenchResult(params, "LockHashSet", measure([&params]() {
         benchSet<LockHashSet<int>>(params.getNThreads(), params.getWorkPerThread());
     }));
+    params.coolOff();
 
     writeBenchResult(params, "FineGrainedSet", measure([&params]() {
         benchSet<FineGrainedSet<int>>(params.getNThreads(), params.getWorkPerThread());
     }));
+    params.coolOff();
 
     writeBenchResult(params, "OptimisticSet", measure([&params]() {
         benchSet<OptimisticSet<int>>(params.getNThreads(), params.getWorkPerThread());
     }));
+    params.coolOff();
 
     writeBenchResult(params, "LazySet", measure([&params]() {
         benchSet<LazySet<int>>(params.getNThreads(), params.getWorkPerThread());
     }));
+    params.coolOff();
 
     return 0;
 }
