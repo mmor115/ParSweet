@@ -19,6 +19,7 @@ Benchmarks expect the following environment variables at runtime:
 * PSWEET_MACHINE - A unique identifier. This will be written to the benchmark results file to help identify which machine each result comes from.
 * PSWEET_COOLDOWN (Optional) - How long, in milliseconds, to sleep between individual tests within one benchmark program. 
 Weaker machines may need this to avoid benchmark results being confounded by thermal throttling. If absent, defaults to 0 (no sleep occurs).
+* PSWEET_WHICH (Optional) - Specifies which individual test to run within one benchmark program. If absent, the entire benchmark runs.
 
 ## How? (Java)
 TODO
