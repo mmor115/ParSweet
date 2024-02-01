@@ -34,21 +34,17 @@ namespace parallel_suite::maps {
         using MySet = Set<MyNode, SetArgs...>;
         static_assert(sets::SetType<MySet, MyNode>);
 
-        std::array<std::unique_ptr<MySet>, NumBuckets> buckets;
+        std::array<MySet, NumBuckets> buckets;
 
         MySet* getNodeHead(usize index) {
-            return buckets[index].get();
+            return &buckets[index];
         }
 
         usize getBucketIndexOfKey(K key) {
             return std::hash<K>{}(key) % (NumBuckets - 1);
         }
     public:
-        SetBasedMap() : buckets() {
-            for (usize i = 0; i < NumBuckets; ++i) {
-                buckets[i] = std::make_unique<MySet>();
-            }
-        }
+        SetBasedMap() : buckets() { }
 
         bool put(K key, V value) {
             auto index = getBucketIndexOfKey(key);
