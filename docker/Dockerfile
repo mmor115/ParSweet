@@ -3,7 +3,7 @@ ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt update -y && apt install -y bzip2 libhwloc-dev vim git gdb python3 python3-pip \
     libpapi-dev patch cmake libblas-dev liblapack-dev libtbb-dev patch \
-    libboost-dev libboost-filesystem-dev g++-12 gcc-12 \
+    libboost-all-dev g++-12 gcc-12 \
     && apt clean
 
 RUN update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-12 10
