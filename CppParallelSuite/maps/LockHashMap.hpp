@@ -34,11 +34,11 @@ namespace parallel_suite::maps {
         using MyNodeHead = NodeHead;
         using MyNode = Node;
 
-        std::array<std::unique_ptr<MyNodeHead>, NumBuckets> buckets;
+        std::array<MyNodeHead, NumBuckets> buckets;
 
         MyNodeHead* getNodeHead(usize index, std::unique_lock<Mutex>& lock) {
-            lock = std::unique_lock(buckets[index]->mutex);
-            return buckets[index].get();
+            lock = std::unique_lock(buckets[index].mutex);
+            return &buckets[index];
         }
 
         usize getBucketIndexOfKey(K key) {
@@ -46,11 +46,7 @@ namespace parallel_suite::maps {
         }
 
     public:
-        LockHashMap() : buckets() {
-            for (usize i = 0; i < NumBuckets; ++i) {
-                buckets[i] = std::make_unique<MyNodeHead>();
-            }
-        }
+        LockHashMap() : buckets() { }
 
         bool put(K key, V value) {
             auto index = getBucketIndexOfKey(key);
