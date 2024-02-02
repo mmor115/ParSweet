@@ -110,6 +110,7 @@ std::unordered_map<std::string, std::function<void(BenchParameters const&)>> tes
         {"std::recursive_mutex", benchLockWrapper<std::recursive_mutex>()}
 #if HAVE_HPX
         ,{"hpx::mutex", benchHpxLockWrapper<hpx::mutex>()}
+        ,{"hpx::spinlock", benchHpxLockWrapper<hpx::spinlock>()}
 #endif
 };
 
