@@ -68,19 +68,22 @@ using namespace parallel_bench;
 using namespace parallel_bench::sets;
 
 template <template<typename, typename> class Set, MutexType Mutex, typename... Rest>
-void benchSets(BenchParameters const& params, std::string const& setName) {
+void benchSets(BenchParameters const& params, std::string const& setName, std::optional<std::string> const& which) {
+    auto lockName = locks::LockTraits<Mutex>::name;
     std::string specific(setName);
     specific += "@";
-    specific += locks::LockTraits<Mutex>::name;
+    specific += lockName;
 
-    writeBenchResult(params, specific, measure([&params]() {
-        benchSet<Set<int, Mutex>>(params.getNThreads(), params.getWorkPerThread());
-    }));
+    if (!which || *which == lockName) {
+        writeBenchResult(params, specific, measure([&params]() {
+            benchSet<Set<int, Mutex>>(params.getNThreads(), params.getWorkPerThread());
+        }));
 
-    params.coolOff();
+        params.coolOff();
+    }
 
     if constexpr (sizeof...(Rest) > 0) {
-        benchSets<Set, Rest...>(params, setName);
+        benchSets<Set, Rest...>(params, setName, which);
     }
 }
 
@@ -98,7 +101,7 @@ int main() {
               locks::TIdLock,
               locks::TTASLock,
               locks::TwoCounterLock
-    >(params, "FineGrainedSet");
+    >(params, "FineGrainedSet", params.getWhich());
 
     return 0;
 }
