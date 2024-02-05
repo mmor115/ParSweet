@@ -5,6 +5,9 @@
 #if HAVE_HPX
 #include <hpx/hpx.hpp>
 #include <hpx/hpx_main.hpp>
+namespace par = hpx;
+#else
+namespace par = std;
 #endif
 #include "../sets/FineGrainedSet.hpp"
 #include "../locks/LockTraits.hpp"
@@ -50,12 +53,12 @@ namespace parallel_bench::sets {
 
     template <SetType<int> IntSet>
     void benchSet(usize const& nThreads, usize const& workSize) {
-        std::vector<std::future<void>> futures;
+        std::vector<par::future<void>> futures;
 
         IntSet theSet;
 
         for (int threadId = 0; threadId < nThreads; ++threadId) {
-            futures.push_back(std::async(std::launch::async, [threadId, &theSet, &workSize, &nThreads]() {
+            futures.push_back(par::async(par::launch::async, [threadId, &theSet, &workSize, &nThreads]() {
                 for (int i = 0; i < workSize; ++i) {
                     auto token = i * nThreads + threadId;
 

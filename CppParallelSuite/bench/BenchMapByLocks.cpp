@@ -20,6 +20,9 @@
 #if HAVE_HPX
 #include <hpx/hpx.hpp>
 #include <hpx/hpx_main.hpp>
+namespace par = hpx;
+#else
+namespace par = std;
 #endif
 
 #include "BlackBox.hpp"
@@ -54,12 +57,12 @@ namespace parallel_bench::maps {
 
     template <MapType<int, int> IntMap>
     void benchMap(usize const& nThreads, usize const& workSize) {
-        std::vector<std::future<void>> futures;
+        std::vector<par::future<void>> futures;
 
         IntMap theMap;
 
         for (int threadId = 0; threadId < nThreads; ++threadId) {
-            futures.push_back(std::async(std::launch::async, [threadId, &theMap, &nThreads, &workSize]() {
+            futures.push_back(par::async(par::launch::async, [threadId, &theMap, &nThreads, &workSize]() {
                 int out;
 
                 for (int i = 0; i < workSize; ++i) {
