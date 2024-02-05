@@ -17,8 +17,36 @@
 #include "../locks/CLHLock.hpp"
 #include "../locks/MCSLock.hpp"
 #include "../locks/TwoCounterLock.hpp"
+#if HAVE_HPX
+#include <hpx/hpx.hpp>
+#include <hpx/hpx_main.hpp>
+#endif
 
 #include "BlackBox.hpp"
+
+namespace parallel_suite::locks {
+    template <>
+    struct LockTraits<std::mutex> {
+        constexpr static char const* name = "std::mutex";
+    };
+
+    template <>
+    struct LockTraits<std::recursive_mutex> {
+        constexpr static char const* name = "std::recursive_mutex";
+    };
+#if HAVE_HPX
+    template <>
+    struct LockTraits<hpx::mutex> {
+        constexpr static char const* name = "hpx::mutex";
+    };
+
+    template <>
+    struct LockTraits<hpx::spinlock> {
+        constexpr static char const* name = "hpx::spinlock";
+    };
+#endif
+}
+
 
 namespace parallel_bench::maps {
     using namespace parallel_suite;
@@ -99,6 +127,8 @@ int main() {
     BenchParameters params("c++", "mapByLocks");
 
     benchMaps<LockHashMap, 16,
+              std::mutex,
+              std::recursive_mutex,
               locks::ALock<100>,
               locks::BackoffLock<1, 17>,
               locks::CLHLock,
@@ -109,6 +139,10 @@ int main() {
               locks::TIdLock,
               locks::TTASLock,
               locks::TwoCounterLock
+#if HAVE_HPX
+,hpx::mutex
+,hpx::spinlock
+#endif
     >(params, "LockHashMap");
 
     return 0;
