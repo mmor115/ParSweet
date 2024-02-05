@@ -65,6 +65,8 @@ with open('psweet.csv', 'r') as csvfile:
     for row in reader:
         label = f"{row['machine']}:{row['workPerThread']}:{row['nThreads']}"
 
+        if row['category'] != 'locks':
+            continue
 
         info.set_machine(row['machine'])
         info.set_work(int(row['workPerThread']))
