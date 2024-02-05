@@ -3,6 +3,14 @@ import csv
 import re
 import os
 from subprocess import PIPE, Popen
+import sys
+import argparse
+
+parser = argparse.ArgumentParser(prog='psweet_stats', description='Create a table of PSweet Stats')
+parser.add_argument('--category', type=str, default='locks', help='category to plot')
+parser.add_argument('--work-size', type=int, help='work size to plot')
+parser.add_argument('--num-threads', type=int, help='number of threads to plot')
+pres=parser.parse_args(sys.argv[1:])
 
 class Info:
     def __init__(self):
@@ -61,22 +69,34 @@ class Stat:
 info = Info()
 with open('psweet.csv', 'r') as csvfile:
     reader = csv.DictReader(csvfile)
-    locks = dict()
+    bins = dict()
+    work_size = pres.work_size
+    num_threads = pres.num_threads
     for row in reader:
-        label = f"{row['machine']}:{row['workPerThread']}:{row['nThreads']}"
-
-        if row['category'] != 'locks':
+        if row['category'] != pres.category:
             continue
+
+        if work_size is None:
+            work_size = int(row['workPerThread'])
+        if num_threads is None:
+            num_threads = int(row['nThreads'])
+
+        if int(row['workPerThread']) != work_size:
+            continue
+        if int(row['nThreads']) != num_threads:
+            continue
+
+        label = f"{row['machine']}:{row['workPerThread']}:{row['nThreads']}"
 
         info.set_machine(row['machine'])
         info.set_work(int(row['workPerThread']))
         info.set_threads(int(row['nThreads']))
 
-        lock = row['specific']
-        if lock not in locks:
-            locks[lock] = Stat()
+        bin0 = row['specific']
+        if bin0 not in bins:
+            bins[bin0] = Stat()
         ms = int(row['ms'])
-        locks[lock].add(ms)
+        bins[bin0].add(ms)
 
 def texify(s):
     ns = ""
@@ -90,25 +110,25 @@ def texify(s):
     return ns
 
 with open("psweet.tex", "w") as fd:
-    for lock in locks:
-        locks[lock].trim()
+    for bin0 in bins:
+        bins[bin0].trim()
 
     def fk(x):
-        return locks[x].stats()[0]
-    slocks = sorted(list(locks.keys()), key=fk)
+        return bins[x].stats()[0]
+    sbins = sorted(list(bins.keys()), key=fk)
 
-    print("%20s %6s %6s %3s" % ("lock", "avg", "sdev", "n"))
+    print("%40s %8s %8s %4s" % (pres.category, "avg", "sdev", "n"))
     print(r"\begin{figure}",file=fd)
     print(r"\begin{tabular}{|c|c|c|}",file=fd)
     print(r"\hline",file=fd)
-    print(r"\textbf{Lock} & \textbf{Time(ms)} & \textbf{$\sigma$(ms)} \\",file=fd)
+    print(r"\textbf{" + pres.category + r"} & \textbf{Time(ms)} & \textbf{$\sigma$(ms)} \\",file=fd)
     print(r"\hline",file=fd)
-    for lock in slocks:
-        stats = locks[lock].stats()
-        print("%20s %6.2f %6.2f %3d" % (lock, stats[0], stats[1], stats[2]))
-        print(texify(rf"{lock} & {'%.2f' % stats[0]} & {'%.2f' % stats[1]} \\"),file=fd)
+    for bin0 in sbins:
+        stats = bins[bin0].stats()
+        print("%40s %8.2f %8.2f %4d" % (bin0, stats[0], stats[1], stats[2]))
+        print(texify(rf"{bin0} & {'%.2f' % stats[0]} & {'%.2f' % stats[1]} \\"),file=fd)
         print(r"\hline",file=fd)
     print(r"\end{tabular}",file=fd)
     print(r"\label{" + label + "}", file=fd)
-    print(r"\caption{Lock benchmark for " + info.machine + f", work: {info.work}, threads: {info.threads}, model: {info.model}"+r"}", file=fd)
+    print(r"\caption{" + pres.category + " benchmark for " + info.machine + f", work: {info.work}, threads: {info.threads}, model: {info.model}"+r"}", file=fd)
     print(r"\end{figure}",file=fd)
