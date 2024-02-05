@@ -6,6 +6,7 @@
 #include <atomic>
 #include <thread>
 #include "../threadlocal/ThreadLocal.hpp"
+#include "LockTraits.hpp"
 
 namespace parallel_suite::locks {
     using namespace parallel_suite::threadlocal;
@@ -54,6 +55,11 @@ namespace parallel_suite::locks {
             myNode.setPtr(myPredecessor.getPtr());
             myPredecessor.setPtr(nullptr);
         }
+    };
+
+    template <>
+    struct LockTraits<CLHLock> {
+        constexpr static char const* name = "CLHLock";
     };
 }
 

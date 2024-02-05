@@ -4,6 +4,7 @@
 
 #include <atomic>
 #include <thread>
+#include "LockTraits.hpp"
 
 namespace parallel_suite::locks {
     class TASLock {
@@ -22,6 +23,11 @@ namespace parallel_suite::locks {
         void unlock() {
             aBool.store(false);
         }
+    };
+
+    template <>
+    struct LockTraits<TASLock> {
+        constexpr static char const* name = "TASLock";
     };
 }
 

@@ -6,6 +6,7 @@
 #include <atomic>
 #include <thread>
 #include "../threadlocal/ThreadLocal.hpp"
+#include "LockTraits.hpp"
 
 namespace parallel_suite::locks {
     using namespace parallel_suite::threadlocal;
@@ -63,6 +64,11 @@ namespace parallel_suite::locks {
             qNode->next.load()->locked = false;
             qNode->next = nullptr;
         }
+    };
+
+    template <>
+    struct LockTraits<MCSLock> {
+        constexpr static char const* name = "MCSLock";
     };
 }
 

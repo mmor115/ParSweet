@@ -107,6 +107,14 @@ add_executable(BenchMaps
         bench/BenchMaps.cpp
         bench/BlackBox.hpp)
 
+add_executable(BenchSetByLocks
+        bench/Bench.hpp
+        bench/BenchSetByLocks.cpp
+        bench/BlackBox.hpp
+        threadlocal/ThreadLocalRand.cpp
+        threadlocal/ThreadId.cpp
+        locks/LockTraits.hpp)
+
 link_libraries(Threads::Threads)
 
 enable_testing()

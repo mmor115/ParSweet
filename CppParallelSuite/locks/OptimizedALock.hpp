@@ -7,6 +7,7 @@
 #include <array>
 #include "../threadlocal/ThreadLocal.hpp"
 #include "../Types.hpp"
+#include "LockTraits.hpp"
 
 namespace parallel_suite::locks {
     using namespace threadlocal;
@@ -50,6 +51,11 @@ namespace parallel_suite::locks {
             auto next = (slot + 1) % ThreadCount;
             *flags[next] = true;
         }
+    };
+
+    template <usize ThreadCount>
+    struct LockTraits<OptimizedALock<ThreadCount>> {
+        constexpr static char const* name = "OptimizedALock";
     };
 }
 

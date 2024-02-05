@@ -5,6 +5,7 @@
 #include <atomic>
 #include <thread>
 #include "../Types.hpp"
+#include "LockTraits.hpp"
 
 namespace parallel_suite::locks {
     class TwoCounterLock {
@@ -26,6 +27,11 @@ namespace parallel_suite::locks {
         void unlock() {
             currentTicket.fetch_add(1);
         }
+    };
+
+    template <>
+    struct LockTraits<TwoCounterLock> {
+        constexpr static char const* name = "TwoCounterLock";
     };
 } // parallel_suite::locks
 

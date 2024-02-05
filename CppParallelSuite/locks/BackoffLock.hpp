@@ -6,6 +6,7 @@
 #include <chrono>
 #include <thread>
 #include "../threadlocal/ThreadLocalRand.hpp"
+#include "LockTraits.hpp"
 
 namespace parallel_suite::locks {
 
@@ -37,6 +38,11 @@ namespace parallel_suite::locks {
         void unlock() {
             aBool.store(false);
         }
+    };
+
+    template <int MinDelay, int MaxDelay>
+    struct LockTraits<locks::BackoffLock<MinDelay, MaxDelay>> {
+        constexpr static char const* name = "BackoffLock";
     };
 }
 

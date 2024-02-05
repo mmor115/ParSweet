@@ -6,6 +6,7 @@
 #include <thread>
 #include "../Types.hpp"
 #include "../threadlocal/ThreadId.hpp"
+#include "LockTraits.hpp"
 
 namespace parallel_suite::locks {
     using namespace threadlocal;
@@ -41,6 +42,11 @@ namespace parallel_suite::locks {
                 std::this_thread::yield();
             }
         }
+    };
+
+    template <>
+    struct LockTraits<TIdLock> {
+        constexpr static char const* name = "TIdLock";
     };
 }
 
