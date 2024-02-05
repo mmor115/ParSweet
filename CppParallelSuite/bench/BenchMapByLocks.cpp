@@ -106,19 +106,21 @@ using namespace parallel_bench;
 using namespace parallel_bench::maps;
 
 template <template<typename, typename, auto, typename> class Map, usize Buckets, MutexType Mutex, typename... Rest>
-void benchMaps(BenchParameters const& params, std::string const& mapName) {
+void benchMaps(BenchParameters const& params, std::string const& mapName, std::optional<std::string> const& which) {
+    auto lockName = locks::LockTraits<Mutex>::name;
     std::string specific(mapName);
     specific += "@";
-    specific += locks::LockTraits<Mutex>::name;
+    specific += lockName;
 
-    writeBenchResult(params, specific, measure([&params]() {
-        benchMap<Map<int, int, Buckets, Mutex>>(params.getNThreads(), params.getWorkPerThread());
-    }));
-
-    params.coolOff();
+    if (!which || *which == lockName) {
+        writeBenchResult(params, specific, measure([&params]() {
+            benchMap<Map<int, int, Buckets, Mutex>>(params.getNThreads(), params.getWorkPerThread());
+        }));
+        params.coolOff();
+    }
 
     if constexpr (sizeof...(Rest) > 0) {
-        benchMaps<Map, Buckets, Rest...>(params, mapName);
+        benchMaps<Map, Buckets, Rest...>(params, mapName, which);
     }
 }
 
@@ -143,7 +145,7 @@ int main() {
 ,hpx::mutex
 ,hpx::spinlock
 #endif
-    >(params, "LockHashMap");
+    >(params, "LockHashMap", params.getWhich());
 
     return 0;
 }
