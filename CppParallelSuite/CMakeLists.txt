@@ -107,6 +107,24 @@ add_executable(BenchMaps
         bench/BenchMaps.cpp
         bench/BlackBox.hpp)
 
+
+if(HPX_FOUND)
+add_hpx_executable(BenchSetByLocks
+        SOURCES bench/Bench.hpp
+        bench/BenchSetByLocks.cpp
+        bench/BlackBox.hpp
+        threadlocal/ThreadLocalRand.cpp
+        threadlocal/ThreadId.cpp
+        locks/LockTraits.hpp)
+
+add_hpx_executable(BenchMapByLocks
+        SOURCES bench/Bench.hpp
+        bench/BenchMapByLocks.cpp
+        bench/BlackBox.hpp
+        threadlocal/ThreadLocalRand.cpp
+        threadlocal/ThreadId.cpp
+        locks/LockTraits.hpp)
+else()
 add_executable(BenchSetByLocks
         bench/Bench.hpp
         bench/BenchSetByLocks.cpp
@@ -122,6 +140,7 @@ add_executable(BenchMapByLocks
         threadlocal/ThreadLocalRand.cpp
         threadlocal/ThreadId.cpp
         locks/LockTraits.hpp)
+endif()
 
 link_libraries(Threads::Threads)
 
