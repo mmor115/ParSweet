@@ -178,14 +178,6 @@ int hpx_main(int argc, char **argv) {
 int main(int argc, char** argv) {
     BenchParameters params("c++", "setByLocks");
 
-    bool use_hpx = false;
-    #if HAVE_HPX
-    use_hpx = true;
-    #endif
-    
-    if(use_hpx) {
-        return hpx::init(argc, argv);
-    }
     benchSets<FineGrainedSet,
               std::mutex,
               std::recursive_mutex,
@@ -200,5 +192,5 @@ int main(int argc, char** argv) {
               locks::TTASLock,
               locks::TwoCounterLock
     >(params, "FineGrainedSet", params.getWhich());
-    return 0;
+    return hpx::init(argc, argv);
 }
