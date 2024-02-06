@@ -2,59 +2,61 @@
 #ifndef THREADLOCAL_HPP
 #define THREADLOCAL_HPP
 
-#include <stdlib.h>
-#include <unistd.h>
 #include <pthread.h>
+#include "../Types.hpp"
+#include "ThreadId.hpp"
 
 namespace parallel_suite::threadlocal {
 
-    const int base_tid = gettid();
-    // This is terrible
-    const std::size_t N = 100;
-
-    template <typename T>
+    template <typename T, usize N = 100 /*This is terrible*/>
     class ThreadLocal {
     private:
-        T* data;
-        bool *is_set;
+        T* dataArr;
+        bool* setArr;
+
+        [[nodiscard]]
+        inline usize getIdx() const {
+            return ThreadId::get() % N;
+        }
 
     public:
         ThreadLocal() requires std::is_default_constructible_v<T> {
-            if(N == 0)
-                throw std::logic_error("ThreadLocal is size 0.");
-            data = new T[N];
-            is_set = new bool[N];
-            for(std::size_t i=0;i<N;i++)
-                is_set[i] = false;
+            static_assert(N > 0);
+
+            dataArr = new T[N];
+            setArr = new bool[N];
+            for (usize i = 0; i < N; i++) {
+                setArr[i] = false;
+            }
         }
 
         ThreadLocal(ThreadLocal&) = delete;
 
         ~ThreadLocal() {
-            delete[] data;
-            delete[] is_set;
+            delete[] dataArr;
+            delete[] setArr;
         }
 
         [[nodiscard]]
         T& get() const {
-            int n = gettid()%N;
-            if(is_set[n]) {
-                return data[n];
-            } else {
-                throw std::logic_error("ThreadLocal value has not been set.");
+            auto idx = getIdx();
+            if (!setArr[idx]) {
+                dataArr[idx] = T();
+                setArr[idx] = true;
             }
+            return dataArr[idx];
         }
 
         [[nodiscard]]
         bool isSet() const {
-            int n = gettid()%N;
-            return is_set[n];
+            auto idx = getIdx();
+            return setArr[idx];
         }
 
         void set(T val) {
-            int n = gettid()%N;
-            is_set[n] = true;
-            data[n] = val;
+            auto idx = getIdx();
+            setArr[idx] = true;
+            dataArr[idx] = val;
         }
     };
 } // parallel_suite::threadlocal
