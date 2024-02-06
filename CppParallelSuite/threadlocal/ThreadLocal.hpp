@@ -8,8 +8,8 @@
 
 namespace parallel_suite::threadlocal {
 
-    int base_tid = gettid();
-    constexpr std::size_t N = 50;
+    const int base_tid = gettid();
+    const std::size_t N = 100;
 
     template <typename T>
     class ThreadLocal {
@@ -19,6 +19,8 @@ namespace parallel_suite::threadlocal {
 
     public:
         ThreadLocal() requires std::is_default_constructible_v<T> {
+            if(N == 0)
+                throw std::logic_error("ThreadLocal is size 0.");
             data = new T[N];
             is_set = new bool[N];
             for(std::size_t i=0;i<N;i++)
