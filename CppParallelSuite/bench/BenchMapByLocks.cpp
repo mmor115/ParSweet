@@ -20,9 +20,6 @@
 #if HAVE_HPX
 #include <hpx/hpx.hpp>
 #include <hpx/hpx_main.hpp>
-namespace par = hpx;
-#else
-namespace par = std;
 #endif
 
 #include "BlackBox.hpp"
@@ -57,12 +54,12 @@ namespace parallel_bench::maps {
 
     template <MapType<int, int> IntMap>
     void benchMap(usize const& nThreads, usize const& workSize) {
-        std::vector<par::future<void>> futures;
+        std::vector<std::future<void>> futures;
 
         IntMap theMap;
 
         for (int threadId = 0; threadId < nThreads; ++threadId) {
-            futures.push_back(par::async(par::launch::async, [threadId, &theMap, &nThreads, &workSize]() {
+            futures.push_back(std::async(std::launch::async, [threadId, &theMap, &nThreads, &workSize]() {
                 int out;
 
                 for (int i = 0; i < workSize; ++i) {
@@ -103,6 +100,57 @@ namespace parallel_bench::maps {
             worker.get();
         }
     }
+
+    #if HAVE_HPX
+    template <MapType<int, int> IntMap>
+    void benchHpxMap(usize const& nThreads, usize const& workSize) {
+        std::vector<hpx::future<void>> futures;
+
+        IntMap theMap;
+
+        for (int threadId = 0; threadId < nThreads; ++threadId) {
+            futures.push_back(hpx::async(hpx::launch::async, [threadId, &theMap, &nThreads, &workSize]() {
+                int out;
+
+                for (int i = 0; i < workSize; ++i) {
+                    auto token = i * nThreads + threadId;
+                    blackBox(theMap.put(token, token));
+                    blackBox(theMap.get(token, out));
+                    blackBox(out);
+                    blackBox(theMap.del(token));
+                    blackBox(theMap.get(token, out));
+                    blackBox(out);
+                }
+
+                for (int i = 0; i < workSize; i++) {
+                    auto token = i * nThreads + threadId;
+                    blackBox(theMap.put(token, token));
+                }
+
+                for (int i = 0; i < workSize; i++) {
+                    auto token = i * nThreads + threadId;
+                    blackBox(theMap.get(token, out));
+                    blackBox(out);
+                }
+
+                for (int i = 0; i < workSize; i++) {
+                    auto token = i * nThreads + threadId;
+                    blackBox(theMap.del(token));
+                }
+
+                for (int i = 0; i < workSize; i++) {
+                    auto token = i * nThreads + threadId;
+                    blackBox(theMap.get(token, out));
+                    blackBox(out);
+                }
+            }));
+        }
+
+        for (auto&& worker : futures) {
+            worker.get();
+        }
+    }
+    #endif
 } // parallel_bench::maps
 
 using namespace parallel_bench;
@@ -116,9 +164,20 @@ void benchMaps(BenchParameters const& params, std::string const& mapName, std::o
     specific += lockName;
 
     if (!which || *which == lockName) {
-        writeBenchResult(params, specific, measure([&params]() {
-            benchMap<Map<int, int, Buckets, Mutex>>(params.getNThreads(), params.getWorkPerThread());
-        }));
+        #if HAVE_HPX
+        if (lockName == "hpx::mutex" || lockName == "hpx::spinlock") {
+            std::cout << "Bench hpx map: " << specific << std::endl;
+            writeBenchResult(params, specific, measure([&params]() {
+                benchHpxMap<Map<int, int, Buckets, Mutex>>(params.getNThreads(), params.getWorkPerThread());
+            }));
+        } else
+        #endif
+        {
+            std::cout << "Bench map: " << specific << std::endl;
+            writeBenchResult(params, specific, measure([&params]() {
+                benchMap<Map<int, int, Buckets, Mutex>>(params.getNThreads(), params.getWorkPerThread());
+            }));
+        }
         params.coolOff();
     }
 
