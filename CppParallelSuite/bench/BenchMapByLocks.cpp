@@ -19,7 +19,7 @@
 #include "../locks/TwoCounterLock.hpp"
 #if HAVE_HPX
 #include <hpx/hpx.hpp>
-#include <hpx/hpx_main.hpp>
+#include <hpx/hpx_init.hpp>
 #endif
 
 #include "BlackBox.hpp"
@@ -103,7 +103,7 @@ namespace parallel_bench::maps {
 
     #if HAVE_HPX
     template <MapType<int, int> IntMap>
-    void benchHpxMap(usize const& nThreads, usize const& workSize) {
+    void benchMapHpx(usize const& nThreads, usize const& workSize) {
         std::vector<hpx::future<void>> futures;
 
         IntMap theMap;
@@ -164,20 +164,10 @@ void benchMaps(BenchParameters const& params, std::string const& mapName, std::o
     specific += lockName;
 
     if (!which || *which == lockName) {
-        #if HAVE_HPX
-        if (lockName == "hpx::mutex" || lockName == "hpx::spinlock") {
-            std::cout << "Bench hpx map: " << specific << std::endl;
-            writeBenchResult(params, specific, measure([&params]() {
-                benchHpxMap<Map<int, int, Buckets, Mutex>>(params.getNThreads(), params.getWorkPerThread());
-            }));
-        } else
-        #endif
-        {
-            std::cout << "Bench map: " << specific << std::endl;
-            writeBenchResult(params, specific, measure([&params]() {
-                benchMap<Map<int, int, Buckets, Mutex>>(params.getNThreads(), params.getWorkPerThread());
-            }));
-        }
+        std::cout << "Bench map: " << specific << std::endl;
+        writeBenchResult(params, specific, measure([&params]() {
+            benchMap<Map<int, int, Buckets, Mutex>>(params.getNThreads(), params.getWorkPerThread());
+        }));
         params.coolOff();
     }
 
@@ -186,6 +176,38 @@ void benchMaps(BenchParameters const& params, std::string const& mapName, std::o
     }
 }
 
+#if HAVE_HPX
+template <template<typename, typename, auto, typename> class Map, usize Buckets, MutexType Mutex, typename... Rest>
+void benchMapsHpx(BenchParameters const& params, std::string const& mapName, std::optional<std::string> const& which) {
+    auto lockName = locks::LockTraits<Mutex>::name;
+    std::string specific(mapName);
+    specific += "@";
+    specific += lockName;
+
+    if (!which || *which == lockName) {
+        std::cout << "(HPX) Bench map: " << specific << std::endl;
+        writeBenchResult(params, specific, measure([&params]() {
+            benchMapHpx<Map<int, int, Buckets, Mutex>>(params.getNThreads(), params.getWorkPerThread());
+        }));
+        params.coolOff();
+    }
+
+    if constexpr (sizeof...(Rest) > 0) {
+        benchMapsHpx<Map, Buckets, Rest...>(params, mapName, which);
+    }
+}
+
+int hpx_main() {
+    BenchParameters params("c++", "mapByLocks");
+
+    benchMapsHpx<LockHashMap, 16,
+              hpx::mutex,
+              hpx::spinlock
+    >(params, "LockHashMap", params.getWhich());
+
+    return hpx::finalize();
+}
+#endif
 
 int main() {
     BenchParameters params("c++", "mapByLocks");
@@ -203,11 +225,13 @@ int main() {
               locks::TIdLock,
               locks::TTASLock,
               locks::TwoCounterLock
-#if HAVE_HPX
-,hpx::mutex
-,hpx::spinlock
-#endif
     >(params, "LockHashMap", params.getWhich());
+
+#if HAVE_HPX
+    if (params.getUseHpx()) {
+        return hpx::init();
+    }
+#endif
 
     return 0;
 }

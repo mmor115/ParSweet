@@ -4,7 +4,7 @@
 #include <future>
 #if HAVE_HPX
 #include <hpx/hpx.hpp>
-#include <hpx/hpx_main.hpp>
+#include <hpx/hpx_init.hpp>
 #endif
 #include "../sets/FineGrainedSet.hpp"
 #include "../locks/LockTraits.hpp"
@@ -90,7 +90,7 @@ namespace parallel_bench::sets {
 
     #if HAVE_HPX
     template <SetType<int> IntSet>
-    void benchHpxSet(usize const& nThreads, usize const& workSize) {
+    void benchSetHpx(usize const& nThreads, usize const& workSize) {
         std::vector<hpx::future<void>> futures;
 
         IntSet theSet;
@@ -143,20 +143,10 @@ void benchSets(BenchParameters const& params, std::string const& setName, std::o
     specific += lockName;
 
     if (!which || *which == lockName) {
-        #if HAVE_HPX
-        if(lockName == "hpx::mutex" || lockName == "hpx::spinlock") {
-            std::cout << "Bench hpx set: " << specific << std::endl;
-            writeBenchResult(params, specific, measure([&params]() {
-                benchHpxSet<Set<int, Mutex>>(params.getNThreads(), params.getWorkPerThread());
-            }));
-        } else
-        #endif
-        {
-            std::cout << "Bench set: " << specific << std::endl;
-            writeBenchResult(params, specific, measure([&params]() {
-                benchSet<Set<int, Mutex>>(params.getNThreads(), params.getWorkPerThread());
-            }));
-        }
+        std::cout << "Bench set: " << specific << std::endl;
+        writeBenchResult(params, specific, measure([&params]() {
+            benchSet<Set<int, Mutex>>(params.getNThreads(), params.getWorkPerThread());
+        }));
 
         params.coolOff();
     }
@@ -166,16 +156,40 @@ void benchSets(BenchParameters const& params, std::string const& setName, std::o
     }
 }
 
-int hpx_main(int argc, char **argv) {
+#if HAVE_HPX
+template <template<typename, typename> class Set, MutexType Mutex, typename... Rest>
+void benchSetsHpx(BenchParameters const& params, std::string const& setName, std::optional<std::string> const& which) {
+    auto lockName = locks::LockTraits<Mutex>::name;
+    std::string specific(setName);
+    specific += "@";
+    specific += lockName;
+
+    if (!which || *which == lockName) {
+        std::cout << "(HPX) Bench set: " << specific << std::endl;
+        writeBenchResult(params, specific, measure([&params]() {
+            benchSetHpx<Set<int, Mutex>>(params.getNThreads(), params.getWorkPerThread());
+        }));
+
+        params.coolOff();
+    }
+
+    if constexpr (sizeof...(Rest) > 0) {
+        benchSetsHpx<Set, Rest...>(params, setName, which);
+    }
+}
+
+int hpx_main() {
     BenchParameters params("c++", "setByLocks");
-    benchSets<FineGrainedSet,
+
+    benchSetsHpx<FineGrainedSet,
               hpx::mutex,
               hpx::spinlock
     >(params, "FineGrainedSet", params.getWhich());
     return hpx::finalize();
 }
+#endif
 
-int main(int argc, char** argv) {
+int main() {
     BenchParameters params("c++", "setByLocks");
 
     benchSets<FineGrainedSet,
@@ -192,5 +206,12 @@ int main(int argc, char** argv) {
               locks::TTASLock,
               locks::TwoCounterLock
     >(params, "FineGrainedSet", params.getWhich());
-    return hpx::init(argc, argv);
+
+#if HAVE_HPX
+    if (params.getUseHpx()) {
+        return hpx::init();
+    }
+#endif
+
+    return 0;
 }

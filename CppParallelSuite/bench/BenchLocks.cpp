@@ -8,7 +8,7 @@
 
 #if HAVE_HPX
   #include <hpx/hpx.hpp>
-  #include <hpx/hpx_main.hpp>
+  #include <hpx/hpx_init.hpp>
 #endif
 #include "../MutexType.hpp"
 #include "../locks/ALock.hpp"
@@ -108,25 +108,55 @@ std::unordered_map<std::string, std::function<void(BenchParameters const&)>> tes
         {"TwoCounterLock", benchLockWrapper<TwoCounterLock>()},
         {"std::mutex", benchLockWrapper<std::mutex>()},
         {"std::recursive_mutex", benchLockWrapper<std::recursive_mutex>()}
-#if HAVE_HPX
-        ,{"hpx::mutex", benchHpxLockWrapper<hpx::mutex>()}
-        ,{"hpx::spinlock", benchHpxLockWrapper<hpx::spinlock>()}
-#endif
 };
+
+#if HAVE_HPX
+std::unordered_map<std::string, std::function<void(BenchParameters const&)>> hpxTests {
+        {"hpx::mutex", benchHpxLockWrapper<hpx::mutex>()},
+        {"hpx::spinlock", benchHpxLockWrapper<hpx::spinlock>()}
+};
+
+int hpx_main() {
+    BenchParameters params("c++", "locks");
+
+    auto which = params.getWhich();
+    if (which && hpxTests.contains(*which)) {
+        std::cout << "(HPX) Bench: " << *which << std::endl;
+        writeBenchResult(params, *which, measure(hpxTests[*which], params));
+        params.coolOff();
+    } else {
+        for (auto& pair : hpxTests) {
+            std::cout << "(HPX) Bench: " << pair.first << std::endl;
+            writeBenchResult(params, pair.first, measure(pair.second, params));
+            params.coolOff();
+        }
+    }
+
+    return hpx::finalize();
+}
+#endif
 
 int main() {
     BenchParameters params("c++", "locks");
 
     auto which = params.getWhich();
     if (which && tests.contains(*which)) {
+        std::cout << "Bench: " << *which << std::endl;
         writeBenchResult(params, *which, measure(tests[*which], params));
         params.coolOff();
     } else {
         for (auto& pair : tests) {
+            std::cout << "Bench: " << pair.first << std::endl;
             writeBenchResult(params, pair.first, measure(pair.second, params));
             params.coolOff();
         }
     }
+
+#if HAVE_HPX
+    if (params.getUseHpx()) {
+        return hpx::init();
+    }
+#endif
 
     return 0;
 }

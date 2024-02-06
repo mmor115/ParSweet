@@ -11,6 +11,7 @@
 #include <iostream>
 #include <thread>
 #include <optional>
+#include <cstring>
 #include "../Types.hpp"
 
 namespace parallel_bench {
@@ -24,6 +25,7 @@ namespace parallel_bench {
         usize nThreads{};
         usize workPerThread{};
         usize cooldown{};
+        bool useHpx{false};
 
 #ifdef NDEBUG
         static constexpr bool debug{false};
@@ -60,6 +62,12 @@ namespace parallel_bench {
             if (auto* szWhich = std::getenv("PSWEET_WHICH")) {
                 which = szWhich;
             }
+
+            if (auto* szUseHpx = std::getenv("PSWEET_USE_HPX")) {
+                if (std::strcmp(szUseHpx, "1") == 0) {
+                    useHpx = true;
+                }
+            }
         }
 
         [[nodiscard]]
@@ -88,8 +96,13 @@ namespace parallel_bench {
         }
 
         [[nodiscard]]
-        std::optional<std::string> const& getWhich() const {
+        inline std::optional<std::string> const& getWhich() const {
             return which;
+        }
+
+        [[nodiscard]]
+        inline bool const& getUseHpx() const {
+            return useHpx;
         }
 
         [[nodiscard]]
