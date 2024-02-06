@@ -34,7 +34,7 @@ namespace parallel_suite::locks {
 
         void lock() {
             if (!myNode.isSet()) {
-                myNode.init();
+                myNode.set(new clh::QNode());
             }
 
             clh::QNode* qNode = myNode.get();

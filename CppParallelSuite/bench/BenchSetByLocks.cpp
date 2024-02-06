@@ -143,12 +143,15 @@ void benchSets(BenchParameters const& params, std::string const& setName, std::o
     specific += lockName;
 
     if (!which || *which == lockName) {
+        #if HAVE_HPX
         if(lockName == "hpx::mutex" || lockName == "hpx::spinlock") {
             std::cout << "Bench hpx set: " << specific << std::endl;
             writeBenchResult(params, specific, measure([&params]() {
                 benchHpxSet<Set<int, Mutex>>(params.getNThreads(), params.getWorkPerThread());
             }));
-        } else {
+        } else
+        #endif
+        {
             std::cout << "Bench set: " << specific << std::endl;
             writeBenchResult(params, specific, measure([&params]() {
                 benchSet<Set<int, Mutex>>(params.getNThreads(), params.getWorkPerThread());
