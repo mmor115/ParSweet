@@ -21,8 +21,8 @@ namespace parallel_suite::locks {
 
     class CLHLock {
     private:
-        ThreadLocal<clh::QNode> myPredecessor;
-        ThreadLocal<clh::QNode> myNode;
+        ThreadLocal<clh::QNode*> myPredecessor;
+        ThreadLocal<clh::QNode*> myNode;
         std::atomic<clh::QNode*> tail;
 
     public:
@@ -37,12 +37,12 @@ namespace parallel_suite::locks {
                 myNode.init();
             }
 
-            clh::QNode* qNode = myNode.getPtr();
+            clh::QNode* qNode = myNode.get();
             qNode->locked = true;
 
             clh::QNode* predecessor = tail.exchange(qNode);
 
-            myPredecessor.setPtr(predecessor);
+            myPredecessor.set(predecessor);
 
             while (predecessor->locked) {
                 std::this_thread::yield();
@@ -50,10 +50,10 @@ namespace parallel_suite::locks {
         }
 
         void unlock() {
-            clh::QNode* qNode = myNode.getPtr();
+            clh::QNode* qNode = myNode.get();
             qNode->locked = false;
-            myNode.setPtr(myPredecessor.getPtr());
-            myPredecessor.setPtr(nullptr);
+            myNode.set(myPredecessor.get());
+            myPredecessor.set(nullptr);
         }
     };
 

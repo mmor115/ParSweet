@@ -2,103 +2,76 @@
 #ifndef THREADLOCAL_HPP
 #define THREADLOCAL_HPP
 
+#include <stdlib.h>
+#include <unistd.h>
 #include <pthread.h>
 
 namespace parallel_suite::threadlocal {
 
+    int base_tid = gettid();
+    constexpr std::size_t N = 50;
+
     template <typename T>
     class ThreadLocal {
     private:
-        pthread_key_t key;
-        T* (*creator)();
-
-        static T* defaultCreator() {
-            return new T();
-        }
-
-        static void defaultDeleter(T* ptr) {
-            delete ptr;
-        }
+        T* data;
+        bool *is_set;
 
     public:
-        ThreadLocal() requires std::is_default_constructible_v<T> : key(), creator(defaultCreator) {
-            auto err = pthread_key_create(&key, reinterpret_cast<void (*)(void*)>(defaultDeleter));
-            if (err != 0) {
-                throw std::system_error(err, std::generic_category(), "pthread_key_create failed.");
-            }
-        }
-
-        explicit ThreadLocal(void (*deleter)(T*)) requires std::is_default_constructible_v<T> : key(), creator(defaultCreator) {
-            auto err = pthread_key_create(&key, reinterpret_cast<void (*)(void*)>(deleter));
-            if (err != 0) {
-                throw std::system_error(err, std::generic_category(), "pthread_key_create failed.");
-            }
-        }
-
-        ThreadLocal(T* (*creator)(), void (*deleter)(T*)) : key(), creator(creator) {
-            auto err = pthread_key_create(&key, reinterpret_cast<void (*)(void*)>(deleter));
-            if (err != 0) {
-                throw std::system_error(err, std::generic_category(), "pthread_key_create failed.");
-            }
+        ThreadLocal() requires std::is_default_constructible_v<T> {
+            data = new T[N];
+            is_set = new bool[N];
+            for(std::size_t i=0;i<N;i++)
+                is_set[i] = false;
         }
 
         ThreadLocal(ThreadLocal&) = delete;
 
         ~ThreadLocal() {
-            pthread_key_delete(key);
+            delete[] data;
+            delete[] is_set;
         }
 
         [[nodiscard]]
-        T get() const {
-            void* ptr = pthread_getspecific(key);
-
-            if (ptr) {
-                return *((T*) ptr);
+        T& get() const {
+            int n = gettid() - base_tid;
+            if (n < N) {
+                if(is_set[n]) {
+                    return data[n];
+                } else {
+                    throw std::logic_error("ThreadLocal value has not been set.");
+                }
             } else {
-                throw std::logic_error("ThreadLocal value has not been set.");
+                throw std::logic_error("ThreadLocal index out of range.");
             }
-        }
-
-        [[nodiscard]]
-        T* getPtr() const {
-            return (T*) pthread_getspecific(key);
         }
 
         [[nodiscard]]
         bool isSet() const {
-            void* ptr = pthread_getspecific(key);
-            return ptr != nullptr;
+            int n = gettid() - base_tid;
+            if (n < N) {
+                return is_set[n];
+            } else {
+                throw std::logic_error("ThreadLocal index out of range.");
+            }
         }
 
         void init() {
-            void* ptr = pthread_getspecific(key);
-
-            if (!ptr) {
-                auto err = pthread_setspecific(key, (void*) creator());
-                if (err != 0) {
-                    throw std::system_error(err, std::generic_category(), "pthread_setspecific failed.");
-                }
+            int n = gettid() - base_tid;
+            if (n < N) {
+                is_set[n] = false;
+            } else {
+                throw std::logic_error("ThreadLocal index out of range.");
             }
         }
 
         void set(T val) {
-            void* ptr = pthread_getspecific(key);
-
-            if (ptr) {
-                *((T*) ptr) = val;
+            int n = gettid() - base_tid;
+            if (n < N) {
+                is_set[n] = true;
+                data[n] = val;
             } else {
-                auto err = pthread_setspecific(key, (void*) creator());
-                if (err != 0) {
-                    throw std::system_error(err, std::generic_category(), "pthread_setspecific failed.");
-                }
-                *((T*) pthread_getspecific(key)) = val;
-            }
-        }
-
-        void setPtr(T* ptr) {
-            auto err = pthread_setspecific(key, (void*) ptr);
-            if (err != 0) {
-                throw std::system_error(err, std::generic_category(), "pthread_setspecific failed.");
+                throw std::logic_error("ThreadLocal index out of range.");
             }
         }
     };

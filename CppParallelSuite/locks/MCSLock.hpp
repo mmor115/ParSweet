@@ -22,7 +22,7 @@ namespace parallel_suite::locks {
 
     class MCSLock {
     private:
-        ThreadLocal<mcs::QNode> myNode;
+        ThreadLocal<mcs::QNode*> myNode;
         std::atomic<mcs::QNode*> tail;
 
     public:
@@ -37,7 +37,7 @@ namespace parallel_suite::locks {
                 myNode.init();
             }
 
-            mcs::QNode* qNode = myNode.getPtr();
+            mcs::QNode* qNode = myNode.get();
             mcs::QNode* predecessor = tail.exchange(qNode);
 
             if (predecessor) {
@@ -50,7 +50,7 @@ namespace parallel_suite::locks {
         }
 
         void unlock() {
-            mcs::QNode* qNode = myNode.getPtr();
+            mcs::QNode* qNode = myNode.get();
             if (!qNode->next.load()) {
                 mcs::QNode* dummy = qNode;
                 if (tail.compare_exchange_strong(dummy, nullptr)) {
