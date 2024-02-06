@@ -9,6 +9,7 @@
 namespace parallel_suite::threadlocal {
 
     const int base_tid = gettid();
+    // This is terrible
     const std::size_t N = 100;
 
     template <typename T>
@@ -36,45 +37,24 @@ namespace parallel_suite::threadlocal {
 
         [[nodiscard]]
         T& get() const {
-            int n = gettid() - base_tid;
-            if (n < N) {
-                if(is_set[n]) {
-                    return data[n];
-                } else {
-                    throw std::logic_error("ThreadLocal value has not been set.");
-                }
+            int n = gettid()%N;
+            if(is_set[n]) {
+                return data[n];
             } else {
-                throw std::logic_error("ThreadLocal index out of range.");
+                throw std::logic_error("ThreadLocal value has not been set.");
             }
         }
 
         [[nodiscard]]
         bool isSet() const {
-            int n = gettid() - base_tid;
-            if (n < N) {
-                return is_set[n];
-            } else {
-                throw std::logic_error("ThreadLocal index out of range.");
-            }
-        }
-
-        void init() {
-            int n = gettid() - base_tid;
-            if (n < N) {
-                is_set[n] = false;
-            } else {
-                throw std::logic_error("ThreadLocal index out of range.");
-            }
+            int n = gettid()%N;
+            return is_set[n];
         }
 
         void set(T val) {
-            int n = gettid() - base_tid;
-            if (n < N) {
-                is_set[n] = true;
-                data[n] = val;
-            } else {
-                throw std::logic_error("ThreadLocal index out of range.");
-            }
+            int n = gettid()%N;
+            is_set[n] = true;
+            data[n] = val;
         }
     };
 } // parallel_suite::threadlocal

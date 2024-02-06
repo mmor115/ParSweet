@@ -170,6 +170,10 @@ int main() {
     BenchParameters params("c++", "setByLocks");
 
     benchSets<FineGrainedSet,
+              #if HAVE_HPX
+              hpx::mutex,
+              hpx::spinlock
+              #else
               std::mutex,
               std::recursive_mutex,
               locks::ALock<100>,
@@ -182,10 +186,7 @@ int main() {
               locks::TIdLock,
               locks::TTASLock,
               locks::TwoCounterLock
-#if HAVE_HPX
-,hpx::mutex
-,hpx::spinlock
-#endif
+              #endif
     >(params, "FineGrainedSet", params.getWhich());
 
     return 0;
