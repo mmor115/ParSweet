@@ -31,7 +31,7 @@ endif()
 
 find_package(Threads REQUIRED)
 
-#find_package(HPX QUIET)
+find_package(HPX QUIET)
 if (HPX_FOUND)
     message("-- HPX Found")
     add_compile_definitions(HAVE_HPX=1)
