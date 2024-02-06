@@ -166,14 +166,27 @@ void benchSets(BenchParameters const& params, std::string const& setName, std::o
     }
 }
 
-int main() {
+int hpx_main(int argc, char **argv) {
     BenchParameters params("c++", "setByLocks");
-
     benchSets<FineGrainedSet,
-              #if HAVE_HPX
               hpx::mutex,
               hpx::spinlock
-              #else
+    >(params, "FineGrainedSet", params.getWhich());
+    return hpx::finalize();
+}
+
+int main(int argc, char** argv) {
+    BenchParameters params("c++", "setByLocks");
+
+    bool use_hpx = false;
+    #if HAVE_HPX
+    use_hpx = true;
+    #endif
+    
+    if(use_hpx) {
+        return hpx::init(argc, argv);
+    }
+    benchSets<FineGrainedSet,
               std::mutex,
               std::recursive_mutex,
               locks::ALock<100>,
@@ -186,8 +199,6 @@ int main() {
               locks::TIdLock,
               locks::TTASLock,
               locks::TwoCounterLock
-              #endif
     >(params, "FineGrainedSet", params.getWhich());
-
     return 0;
 }
