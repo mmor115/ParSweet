@@ -5,9 +5,6 @@
 #if HAVE_HPX
 #include <hpx/hpx.hpp>
 #include <hpx/hpx_main.hpp>
-namespace par = hpx;
-#else
-namespace par = std;
 #endif
 #include "../sets/FineGrainedSet.hpp"
 #include "../locks/LockTraits.hpp"
@@ -53,12 +50,12 @@ namespace parallel_bench::sets {
 
     template <SetType<int> IntSet>
     void benchSet(usize const& nThreads, usize const& workSize) {
-        std::vector<par::future<void>> futures;
+        std::vector<std::future<void>> futures;
 
         IntSet theSet;
 
         for (int threadId = 0; threadId < nThreads; ++threadId) {
-            futures.push_back(par::async(par::launch::async, [threadId, &theSet, &workSize, &nThreads]() {
+            futures.push_back(std::async(std::launch::async, [threadId, &theSet, &workSize, &nThreads]() {
                 for (int i = 0; i < workSize; ++i) {
                     auto token = i * nThreads + threadId;
 
@@ -91,6 +88,48 @@ namespace parallel_bench::sets {
         }
     }
 
+    #if HAVE_HPX
+    template <SetType<int> IntSet>
+    void benchHpxSet(usize const& nThreads, usize const& workSize) {
+        std::vector<hpx::future<void>> futures;
+
+        IntSet theSet;
+
+        for (int threadId = 0; threadId < nThreads; ++threadId) {
+            futures.push_back(hpx::async(hpx::launch::async, [threadId, &theSet, &workSize, &nThreads]() {
+                for (int i = 0; i < workSize; ++i) {
+                    auto token = i * nThreads + threadId;
+
+                    blackBox(theSet.add(token));
+                    blackBox(theSet.contains(token));
+                    blackBox(theSet.remove(token));
+                    blackBox(theSet.contains(token));
+                }
+
+                for (int i = 0; i < workSize; i++) {
+                    blackBox(theSet.add(i * nThreads + threadId));
+                }
+
+                for (int i = 0; i < workSize; i++) {
+                    blackBox(theSet.contains(i * nThreads + threadId));
+                }
+
+                for (int i = 0; i < workSize; i++) {
+                    blackBox(theSet.remove(i * nThreads + threadId));
+                }
+
+                for (int i = 0; i < workSize; i++) {
+                    blackBox(theSet.contains(i * nThreads + threadId));
+                }
+            }));
+        }
+
+        for (auto&& worker : futures) {
+            worker.get();
+        }
+    }
+    #endif
+
 } // parallel_bench::sets
 
 using namespace parallel_bench;
@@ -104,9 +143,17 @@ void benchSets(BenchParameters const& params, std::string const& setName, std::o
     specific += lockName;
 
     if (!which || *which == lockName) {
-        writeBenchResult(params, specific, measure([&params]() {
-            benchSet<Set<int, Mutex>>(params.getNThreads(), params.getWorkPerThread());
-        }));
+        if(lockName == "hpx::mutex" || lockName == "hpx::spinlock") {
+            std::cout << "Bench hpx set: " << specific << std::endl;
+            writeBenchResult(params, specific, measure([&params]() {
+                benchHpxSet<Set<int, Mutex>>(params.getNThreads(), params.getWorkPerThread());
+            }));
+        } else {
+            std::cout << "Bench set: " << specific << std::endl;
+            writeBenchResult(params, specific, measure([&params]() {
+                benchSet<Set<int, Mutex>>(params.getNThreads(), params.getWorkPerThread());
+            }));
+        }
 
         params.coolOff();
     }
