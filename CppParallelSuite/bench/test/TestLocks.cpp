@@ -18,7 +18,7 @@ namespace parallel_test::locks {
     using namespace parallel_suite;
     using namespace parallel_suite::locks;
 
-    constexpr static int Threads = 12;
+    constexpr static int Threads = N_LOGICAL_CORES;
     constexpr static int CountTo = 20000;
 
     template <MutexType M>

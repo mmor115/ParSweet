@@ -96,8 +96,8 @@ constexpr auto benchHpxLockWrapper() {
 #endif
 
 std::unordered_map<std::string, std::function<void(BenchParameters const&)>> tests {
-        {"ALock<100>", benchLockWrapper<ALock<100>>()},
-        {"OptimizedALock<100>", benchLockWrapper<OptimizedALock<100>>()},
+        {"ALock", benchLockWrapper<ALock<N_THREADS_ALLOC>>()},
+        {"OptimizedALock", benchLockWrapper<OptimizedALock<N_THREADS_ALLOC>>()},
         {"BackoffLock<1:17>", benchLockWrapper<BackoffLock<1, 17>>()},
         {"IdLock", benchLockWrapper<IdLock>()},
         {"TIdLock", benchLockWrapper<TIdLock>()},

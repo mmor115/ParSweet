@@ -26,7 +26,7 @@ namespace parallel_suite::locks {
         };
 
     private:
-        ThreadLocal<usize> mySlotIndex;
+        ThreadLocal<usize, ThreadCount> mySlotIndex;
         std::atomic<usize> tail;
         std::array<Cell<std::atomic<bool>>, ThreadCount> flags;
 

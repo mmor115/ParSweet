@@ -39,6 +39,28 @@ else()
     add_compile_definitions(HAVE_HPX=0)
 endif()
 
+cmake_host_system_information(RESULT N_LOGICAL_CORES
+                              QUERY NUMBER_OF_LOGICAL_CORES)
+add_compile_definitions(N_LOGICAL_CORES=${N_LOGICAL_CORES})
+message(STATUS "Setting N_LOGICAL_CORES=${N_LOGICAL_CORES}")
+
+# Sometimes we need to statically allocate memory depending on the maximum number of threads.
+# By default, set this to the number of logical cores plus a little. Override this with PSWEET_N_THREADS_ALLOC.
+if (DEFINED ENV{PSWEET_N_THREADS_ALLOC})
+    message(STATUS "Setting N_THREADS_ALLOC=$ENV{PSWEET_N_THREADS_ALLOC}")
+    add_compile_definitions(N_THREADS_ALLOC=$ENV{PSWEET_N_THREADS_ALLOC})
+else()
+    if (N_LOGICAL_CORES LESS_EQUAL 0)
+        message(WARNING "Could not determine number of cores, and PSWEET_N_THREADS_ALLOC is not defined. Defaulting to 100.")
+        message(STATUS "Setting N_THREADS_ALLOC=100")
+        add_compile_definitions(N_THREADS_ALLOC=100)
+    else()
+        math(EXPR N_LOGICAL_CORES "${N_LOGICAL_CORES} * 6 / 5 + 1")
+        message(STATUS "Setting N_THREADS_ALLOC=${N_LOGICAL_CORES}")
+        add_compile_definitions(N_THREADS_ALLOC=${N_LOGICAL_CORES})
+    endif()
+endif()
+
 add_executable(TestBarrier
         barrier/Barrier.hpp
         bench/test/TestBarrier.cpp)

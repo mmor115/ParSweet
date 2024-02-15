@@ -1,6 +1,6 @@
 
-#ifndef THREADLOCAL_HPP
-#define THREADLOCAL_HPP
+#ifndef THREAD_LOCAL_HPP
+#define THREAD_LOCAL_HPP
 
 #include <pthread.h>
 #include "../Types.hpp"
@@ -8,7 +8,7 @@
 
 namespace parallel_suite::threadlocal {
 
-    template <typename T, usize N = 100 /*This is terrible*/>
+    template <typename T, usize MaxThreads = N_THREADS_ALLOC>
     class ThreadLocal {
     private:
         T* dataArr;
@@ -16,16 +16,16 @@ namespace parallel_suite::threadlocal {
 
         [[nodiscard]]
         inline usize getIdx() const {
-            return ThreadId::get() % N;
+            return ThreadId::get() % MaxThreads;
         }
 
     public:
         ThreadLocal() requires std::is_default_constructible_v<T> {
-            static_assert(N > 0);
+            static_assert(MaxThreads > 0);
 
-            dataArr = new T[N];
-            setArr = new bool[N];
-            for (usize i = 0; i < N; i++) {
+            dataArr = new T[MaxThreads];
+            setArr = new bool[MaxThreads];
+            for (usize i = 0; i < MaxThreads; i++) {
                 setArr[i] = false;
             }
         }
@@ -61,4 +61,4 @@ namespace parallel_suite::threadlocal {
     };
 } // parallel_suite::threadlocal
 
-#endif //THREADLOCAL_HPP
+#endif //THREAD_LOCAL_HPP
