@@ -2,13 +2,13 @@
 #ifndef FINE_GRAINED_SET_HPP
 #define FINE_GRAINED_SET_HPP
 
-#include <mutex>
 #include "../KeyType.hpp"
 #include "../MutexType.hpp"
 #include "../Types.hpp"
 #include "NodeMarkers.hpp"
 #include "SetNode.hpp"
 #include "SetTypes.hpp"
+#include <mutex>
 
 namespace parallel_suite::sets {
 
