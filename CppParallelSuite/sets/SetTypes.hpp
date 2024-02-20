@@ -23,6 +23,6 @@ namespace parallel_suite::sets {
     concept PtrFindCallback = requires(F f, N* n1, N* n2) {
         f(n1, n2);
     };
-} // parallel_suite::sets
+} // namespace parallel_suite::sets
 
 #endif //SET_TYPES_HPP

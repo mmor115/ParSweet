@@ -2,13 +2,13 @@
 #ifndef LOCK_HASH_SET_HPP
 #define LOCK_HASH_SET_HPP
 
-#include <mutex>
-#include <array>
-#include <optional>
-#include "../Types.hpp"
 #include "../KeyType.hpp"
 #include "../MutexType.hpp"
+#include "../Types.hpp"
 #include "SetTypes.hpp"
+#include <array>
+#include <mutex>
+#include <optional>
 
 namespace parallel_suite::sets {
 
@@ -20,7 +20,7 @@ namespace parallel_suite::sets {
             const T val;
             std::unique_ptr<Node> next;
 
-            explicit Node(T val) : val(val), next(nullptr) { }
+            explicit Node(T val) : val(val), next(nullptr) {}
         };
 
         class NodeHead {
@@ -28,7 +28,7 @@ namespace parallel_suite::sets {
             Mutex mutex;
             std::unique_ptr<Node> head;
 
-            NodeHead() : mutex(), head(nullptr) { }
+            NodeHead() : mutex(), head(nullptr) {}
         };
 
         using MyNodeHead = NodeHead;
@@ -163,6 +163,6 @@ namespace parallel_suite::sets {
             }
         }
     };
-} // parallel_suite::sets
+} // namespace parallel_suite::sets
 
 #endif //LOCK_HASH_SET_HPP

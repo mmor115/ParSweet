@@ -4,4 +4,4 @@
 namespace parallel_suite::threadlocal {
     thread_local usize ThreadId::id{0};
     std::atomic<usize> ThreadId::idCounter{1};
-} //  parallel_suite::threadlocal
+} // namespace parallel_suite::threadlocal

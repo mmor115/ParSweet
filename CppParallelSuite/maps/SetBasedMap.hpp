@@ -2,10 +2,10 @@
 #ifndef SET_BASED_MAP_HPP
 #define SET_BASED_MAP_HPP
 
-#include <mutex>
-#include "../sets/SetTypes.hpp"
 #include "../KeyType.hpp"
 #include "../Types.hpp"
+#include "../sets/SetTypes.hpp"
+#include <mutex>
 
 namespace parallel_suite::maps {
 
@@ -15,8 +15,8 @@ namespace parallel_suite::maps {
         K key;
         V value;
 
-        SetBasedMapNode(K key, V value) : key(key), value(value) { }
-        SetBasedMapNode(K key) : key(key) { } // NOLINT(*-explicit-constructor)
+        SetBasedMapNode(K key, V value) : key(key), value(value) {}
+        SetBasedMapNode(K key) : key(key) {} // NOLINT(*-explicit-constructor)
 
         bool operator==(SetBasedMapNode const& rhs) const {
             return key == rhs.key;
@@ -27,7 +27,7 @@ namespace parallel_suite::maps {
         }
     };
 
-    template <KeyType K, typename V, template<typename, typename...> class Set, usize NumBuckets = 16, typename... SetArgs>
+    template <KeyType K, typename V, template <typename, typename...> class Set, usize NumBuckets = 16, typename... SetArgs>
     class SetBasedMap {
     private:
         using MyNode = SetBasedMapNode<K, V>;
@@ -43,8 +43,9 @@ namespace parallel_suite::maps {
         usize getBucketIndexOfKey(K key) {
             return std::hash<K>{}(key) % (NumBuckets - 1);
         }
+
     public:
-        SetBasedMap() : buckets() { }
+        SetBasedMap() : buckets() {}
 
         bool put(K key, V value) {
             auto index = getBucketIndexOfKey(key);
@@ -70,7 +71,7 @@ namespace parallel_suite::maps {
             return getNodeHead(index)->remove(key);
         }
     };
-} // parallel_suite::maps
+} // namespace parallel_suite::maps
 
 namespace std {
     template <typename K, typename V>
@@ -79,6 +80,6 @@ namespace std {
             return hash<K>{}(n.key);
         }
     };
-} // std
+} // namespace std
 
 #endif //SET_BASED_MAP_HPP

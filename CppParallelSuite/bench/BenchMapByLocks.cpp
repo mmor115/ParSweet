@@ -1,22 +1,22 @@
 #include "Bench.hpp"
 
-#include <vector>
 #include <future>
+#include <vector>
 
 #include "../MutexType.hpp"
-#include "../maps/MapTypes.hpp"
-#include "../maps/LockHashMap.hpp"
-#include "../locks/LockTraits.hpp"
 #include "../locks/ALock.hpp"
-#include "../locks/OptimizedALock.hpp"
-#include "../locks/IdLock.hpp"
-#include "../locks/TIdLock.hpp"
-#include "../locks/TASLock.hpp"
-#include "../locks/TTASLock.hpp"
 #include "../locks/BackoffLock.hpp"
 #include "../locks/CLHLock.hpp"
+#include "../locks/IdLock.hpp"
+#include "../locks/LockTraits.hpp"
 #include "../locks/MCSLock.hpp"
+#include "../locks/OptimizedALock.hpp"
+#include "../locks/TASLock.hpp"
+#include "../locks/TIdLock.hpp"
+#include "../locks/TTASLock.hpp"
 #include "../locks/TwoCounterLock.hpp"
+#include "../maps/LockHashMap.hpp"
+#include "../maps/MapTypes.hpp"
 #if HAVE_HPX
 #include <hpx/hpx.hpp>
 #include <hpx/hpx_init.hpp>
@@ -45,7 +45,7 @@ namespace parallel_suite::locks {
         constexpr static char const* name = "hpx::spinlock";
     };
 #endif
-}
+} // namespace parallel_suite::locks
 
 
 namespace parallel_bench::maps {
@@ -101,7 +101,7 @@ namespace parallel_bench::maps {
         }
     }
 
-    #if HAVE_HPX
+#if HAVE_HPX
     template <MapType<int, int> IntMap>
     void benchMapHpx(usize const& nThreads, usize const& workSize) {
         std::vector<hpx::future<void>> futures;
@@ -150,13 +150,13 @@ namespace parallel_bench::maps {
             worker.get();
         }
     }
-    #endif
-} // parallel_bench::maps
+#endif
+} // namespace parallel_bench::maps
 
 using namespace parallel_bench;
 using namespace parallel_bench::maps;
 
-template <template<typename, typename, auto, typename> class Map, usize Buckets, MutexType Mutex, typename... Rest>
+template <template <typename, typename, auto, typename> class Map, usize Buckets, MutexType Mutex, typename... Rest>
 void benchMaps(BenchParameters const& params, std::string const& mapName, std::optional<std::string> const& which) {
     auto lockName = locks::LockTraits<Mutex>::name;
     std::string specific(mapName);
@@ -177,7 +177,7 @@ void benchMaps(BenchParameters const& params, std::string const& mapName, std::o
 }
 
 #if HAVE_HPX
-template <template<typename, typename, auto, typename> class Map, usize Buckets, MutexType Mutex, typename... Rest>
+template <template <typename, typename, auto, typename> class Map, usize Buckets, MutexType Mutex, typename... Rest>
 void benchMapsHpx(BenchParameters const& params, std::string const& mapName, std::optional<std::string> const& which) {
     auto lockName = locks::LockTraits<Mutex>::name;
     std::string specific(mapName);
@@ -201,9 +201,8 @@ int hpx_main() {
     BenchParameters params("c++", "mapByLocks");
 
     benchMapsHpx<LockHashMap, 16,
-              hpx::mutex,
-              hpx::spinlock
-    >(params, "LockHashMap", params.getWhich());
+                 hpx::mutex,
+                 hpx::spinlock>(params, "LockHashMap", params.getWhich());
 
     return hpx::finalize();
 }
@@ -224,8 +223,7 @@ int main() {
               locks::TASLock,
               locks::TIdLock,
               locks::TTASLock,
-              locks::TwoCounterLock
-    >(params, "LockHashMap", params.getWhich());
+              locks::TwoCounterLock>(params, "LockHashMap", params.getWhich());
 
 #if HAVE_HPX
     if (params.getUseHpx()) {

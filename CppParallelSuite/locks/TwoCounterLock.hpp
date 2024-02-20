@@ -2,10 +2,10 @@
 #ifndef TWO_COUNTER_LOCK_HPP
 #define TWO_COUNTER_LOCK_HPP
 
-#include <atomic>
-#include <thread>
 #include "../Types.hpp"
 #include "LockTraits.hpp"
+#include <atomic>
+#include <thread>
 
 namespace parallel_suite::locks {
     class TwoCounterLock {
@@ -14,7 +14,7 @@ namespace parallel_suite::locks {
         std::atomic<usize> ticketCounter;
 
     public:
-        TwoCounterLock() : currentTicket(0), ticketCounter(0) { }
+        TwoCounterLock() : currentTicket(0), ticketCounter(0) {}
 
         void lock() {
             auto ticket = ticketCounter.fetch_add(1);
@@ -33,6 +33,6 @@ namespace parallel_suite::locks {
     struct LockTraits<TwoCounterLock> {
         constexpr static char const* name = "TwoCounterLock";
     };
-} // parallel_suite::locks
+} // namespace parallel_suite::locks
 
 #endif //TWO_COUNTER_LOCK_HPP

@@ -1,6 +1,6 @@
+#include "../../barrier/Barrier.hpp"
 #include <iostream>
 #include <vector>
-#include "../../barrier/Barrier.hpp"
 
 namespace parallel_test::barrier {
     using namespace parallel_suite::barrier;
@@ -17,7 +17,7 @@ namespace parallel_test::barrier {
             barrier.sync();
         }
     }
-} // parallel_test::barrier
+} // namespace parallel_test::barrier
 
 using namespace parallel_test::barrier;
 

@@ -2,25 +2,25 @@
 #ifndef OPTIMISTIC_SET_HPP
 #define OPTIMISTIC_SET_HPP
 
-#include <mutex>
-#include <cassert>
-#include "../Types.hpp"
 #include "../KeyType.hpp"
 #include "../MutexType.hpp"
+#include "../Types.hpp"
 #include "NodeMarkers.hpp"
 #include "SetNode.hpp"
 #include "SetTypes.hpp"
+#include <cassert>
+#include <mutex>
 
 namespace parallel_suite::sets {
 
-    template <KeyType T, MutexType Mutex=std::mutex>
+    template <KeyType T, MutexType Mutex = std::mutex>
     class OptimisticSet {
     private:
         using MyNode = AtomicNode<T, Mutex>;
 
         std::shared_ptr<MyNode> head;
 
-        template<FindCallback<MyNode> F>
+        template <FindCallback<MyNode> F>
         bool find(T const& t, F&& callback) {
             const auto key = std::hash<T>{}(t);
 
@@ -28,9 +28,7 @@ namespace parallel_suite::sets {
                 std::shared_ptr<MyNode> predecessor = head;
                 std::shared_ptr<MyNode> current = predecessor->next;
 
-                while (current->next.load()
-                       && current->key <= key
-                       && (key != current->key || t != current->value)) {
+                while (current->next.load() && current->key <= key && (key != current->key || t != current->value)) {
                     predecessor = current;
                     current = current->next;
                 }
@@ -46,8 +44,7 @@ namespace parallel_suite::sets {
                 std::shared_ptr<MyNode> check = head;
                 std::shared_ptr<MyNode> next = check->next;
 
-                while (check->key < predecessor->key
-                       || (check->key == predecessor->key && next->value != current->value)) {
+                while (check->key < predecessor->key || (check->key == predecessor->key && next->value != current->value)) {
                     check = next;
                     next = check->next;
                 }
@@ -111,7 +108,7 @@ namespace parallel_suite::sets {
         }
     };
 
-}// parallel_suite::sets
+} // namespace parallel_suite::sets
 
 
 #endif //OPTIMISTIC_SET_HPP

@@ -2,12 +2,12 @@
 #ifndef OPTIMIZED_ALOCK_HPP
 #define OPTIMIZED_ALOCK_HPP
 
+#include "../Types.hpp"
+#include "../threadlocal/ThreadLocal.hpp"
+#include "LockTraits.hpp"
+#include <array>
 #include <atomic>
 #include <thread>
-#include <array>
-#include "../threadlocal/ThreadLocal.hpp"
-#include "../Types.hpp"
-#include "LockTraits.hpp"
 
 namespace parallel_suite::locks {
     using namespace threadlocal;
@@ -18,7 +18,7 @@ namespace parallel_suite::locks {
         struct alignas(std::hardware_destructive_interference_size) Cell {
             T data;
 
-            Cell() : data() { }
+            Cell() : data() {}
 
             T& operator*() {
                 return data;
@@ -57,6 +57,6 @@ namespace parallel_suite::locks {
     struct LockTraits<OptimizedALock<ThreadCount>> {
         constexpr static char const* name = "OptimizedALock";
     };
-}
+} // namespace parallel_suite::locks
 
 #endif //OPTIMIZED_ALOCK_HPP

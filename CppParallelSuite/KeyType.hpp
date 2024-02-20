@@ -2,9 +2,9 @@
 #ifndef KEYTYPE_HPP
 #define KEYTYPE_HPP
 
+#include "Types.hpp"
 #include <concepts>
 #include <memory>
-#include "Types.hpp"
 
 namespace parallel_suite {
     template <typename K>
@@ -14,6 +14,6 @@ namespace parallel_suite {
 
     template <typename K>
     concept OrderedKeyType = std::totally_ordered<K> && std::three_way_comparable<K> && KeyType<K>;
-}
+} // namespace parallel_suite
 
 #endif // KEYTYPE_HPP

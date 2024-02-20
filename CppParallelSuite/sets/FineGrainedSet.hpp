@@ -2,23 +2,24 @@
 #ifndef FINE_GRAINED_SET_HPP
 #define FINE_GRAINED_SET_HPP
 
-#include "../Types.hpp"
+#include <mutex>
 #include "../KeyType.hpp"
 #include "../MutexType.hpp"
+#include "../Types.hpp"
 #include "NodeMarkers.hpp"
 #include "SetNode.hpp"
 #include "SetTypes.hpp"
 
 namespace parallel_suite::sets {
 
-    template <KeyType T, MutexType Mutex=std::mutex>
+    template <KeyType T, MutexType Mutex = std::mutex>
     class FineGrainedSet {
     private:
         using MyNode = AtomicNode<T, Mutex>;
 
         std::shared_ptr<MyNode> head;
 
-        template<FindCallback<MyNode> F>
+        template <FindCallback<MyNode> F>
         bool find(T const& t, F&& callback) {
             const auto key = std::hash<T>{}(t);
 
@@ -28,9 +29,7 @@ namespace parallel_suite::sets {
             std::unique_lock currentLock(predecessor->next.load()->mutex);
             std::shared_ptr<MyNode> current = predecessor->next;
 
-            while (current->next.load()
-                    && current->key <= key
-                    && (key != current->key || t != current->value)) {
+            while (current->next.load() && current->key <= key && (key != current->key || t != current->value)) {
                 predecessor = current;
                 current = current->next;
                 predecessorLock.swap(currentLock);
@@ -94,7 +93,7 @@ namespace parallel_suite::sets {
         }
     };
 
-}// parallel_suite::sets
+} // namespace parallel_suite::sets
 
 
 #endif //FINE_GRAINED_SET_HPP

@@ -13,19 +13,20 @@ namespace parallel_bench {
 #pragma optimize("", off)
     template <class T>
     void blackBox(T&& datum) {
-      datum = datum;
+        datum = datum;
     }
 #pragma optimize("", on)
 #elif defined(__clang__) /* Clang */
     template <class T>
     __attribute__((__optnone__)) void blackBox(T&& datum) {
     }
-#else /* GCC */
+#else                    /* GCC */
     template <class T>
     void blackBox(T&& datum) {
-        asm volatile("" : "+r" (datum));
+        asm volatile(""
+                     : "+r"(datum));
     }
 #endif
-}
+} // namespace parallel_bench
 
 #endif //BLACK_BOX_HPP

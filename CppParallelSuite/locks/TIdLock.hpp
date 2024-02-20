@@ -2,11 +2,11 @@
 #ifndef TJLOCK_HPP
 #define TJLOCK_HPP
 
-#include <atomic>
-#include <thread>
 #include "../Types.hpp"
 #include "../threadlocal/ThreadId.hpp"
 #include "LockTraits.hpp"
+#include <atomic>
+#include <thread>
 
 namespace parallel_suite::locks {
     using namespace threadlocal;
@@ -14,8 +14,9 @@ namespace parallel_suite::locks {
     class TIdLock {
     private:
         std::atomic<usize> turn;
+
     public:
-        TIdLock() : turn(0) { }
+        TIdLock() : turn(0) {}
 
         void lock() {
             const auto ticket = ThreadId::get();
@@ -48,6 +49,6 @@ namespace parallel_suite::locks {
     struct LockTraits<TIdLock> {
         constexpr static char const* name = "TIdLock";
     };
-}
+} // namespace parallel_suite::locks
 
 #endif //TJLOCK_HPP

@@ -12,6 +12,6 @@ namespace parallel_suite::maps {
         { s.put(k, v) } -> std::convertible_to<bool>;
         { s.del(k) } -> std::convertible_to<bool>;
     };
-} // parallel_suite::maps
+} // namespace parallel_suite::maps
 
 #endif //MAP_TYPES_HPP

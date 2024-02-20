@@ -13,10 +13,11 @@ namespace parallel_suite {
         std::mt19937 mt;
 
     public:
-        Rand() : device(), mt(device()) { }
+        Rand() : device(), mt(device()) {}
 
-        template<typename T1, typename T2>
-        Num getRand(T1 origin, T2 bound) requires std::convertible_to<T1, Num> && std::convertible_to<T2, Num> {
+        template <typename T1, typename T2>
+        requires std::convertible_to<T1, Num> && std::convertible_to<T2, Num>
+        Num getRand(T1 origin, T2 bound) {
             Dist dist(origin, bound);
             return dist(mt);
         }
@@ -24,6 +25,6 @@ namespace parallel_suite {
 
     using IntRand = Rand<std::uniform_int_distribution<int>, int>;
     using DoubleRand = Rand<std::uniform_real_distribution<double>, double>;
-}
+} // namespace parallel_suite
 
-#endif //RAND_HPP
+#endif // RAND_HPP

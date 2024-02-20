@@ -3,10 +3,10 @@
 #define CLH_LOCK_HPP
 
 
-#include <atomic>
-#include <thread>
 #include "../threadlocal/ThreadLocal.hpp"
 #include "LockTraits.hpp"
+#include <atomic>
+#include <thread>
 
 namespace parallel_suite::locks {
     using namespace parallel_suite::threadlocal;
@@ -15,9 +15,9 @@ namespace parallel_suite::locks {
         class QNode {
         public:
             bool locked;
-            QNode() : locked(false) { }
+            QNode() : locked(false) {}
         };
-    }
+    } // namespace clh
 
     class CLHLock {
     private:
@@ -26,7 +26,7 @@ namespace parallel_suite::locks {
         std::atomic<clh::QNode*> tail;
 
     public:
-        CLHLock() : myPredecessor(), myNode(), tail(new clh::QNode()) { }
+        CLHLock() : myPredecessor(), myNode(), tail(new clh::QNode()) {}
 
         ~CLHLock() {
             delete tail.load();
@@ -61,6 +61,6 @@ namespace parallel_suite::locks {
     struct LockTraits<CLHLock> {
         constexpr static char const* name = "CLHLock";
     };
-}
+} // namespace parallel_suite::locks
 
 #endif //CLH_LOCK_HPP

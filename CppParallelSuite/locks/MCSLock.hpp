@@ -3,10 +3,10 @@
 #define MCS_LOCK_HPP
 
 
-#include <atomic>
-#include <thread>
 #include "../threadlocal/ThreadLocal.hpp"
 #include "LockTraits.hpp"
+#include <atomic>
+#include <thread>
 
 namespace parallel_suite::locks {
     using namespace parallel_suite::threadlocal;
@@ -16,9 +16,9 @@ namespace parallel_suite::locks {
         public:
             std::atomic<bool> locked;
             std::atomic<QNode*> next;
-            QNode() : locked(false), next(nullptr) { }
+            QNode() : locked(false), next(nullptr) {}
         };
-    }
+    } // namespace mcs
 
     class MCSLock {
     private:
@@ -26,7 +26,7 @@ namespace parallel_suite::locks {
         std::atomic<mcs::QNode*> tail;
 
     public:
-        MCSLock() : myNode(), tail(nullptr) { }
+        MCSLock() : myNode(), tail(nullptr) {}
 
         ~MCSLock() {
             delete tail.load();
@@ -70,6 +70,6 @@ namespace parallel_suite::locks {
     struct LockTraits<MCSLock> {
         constexpr static char const* name = "MCSLock";
     };
-}
+} // namespace parallel_suite::locks
 
 #endif //MCS_LOCK_HPP

@@ -1,23 +1,23 @@
 #include "Bench.hpp"
 
-#include <vector>
 #include <future>
+#include <vector>
 #if HAVE_HPX
 #include <hpx/hpx.hpp>
 #include <hpx/hpx_init.hpp>
 #endif
-#include "../sets/FineGrainedSet.hpp"
-#include "../locks/LockTraits.hpp"
 #include "../locks/ALock.hpp"
-#include "../locks/OptimizedALock.hpp"
-#include "../locks/IdLock.hpp"
-#include "../locks/TIdLock.hpp"
-#include "../locks/TASLock.hpp"
-#include "../locks/TTASLock.hpp"
 #include "../locks/BackoffLock.hpp"
 #include "../locks/CLHLock.hpp"
+#include "../locks/IdLock.hpp"
+#include "../locks/LockTraits.hpp"
 #include "../locks/MCSLock.hpp"
+#include "../locks/OptimizedALock.hpp"
+#include "../locks/TASLock.hpp"
+#include "../locks/TIdLock.hpp"
+#include "../locks/TTASLock.hpp"
 #include "../locks/TwoCounterLock.hpp"
+#include "../sets/FineGrainedSet.hpp"
 
 #include "BlackBox.hpp"
 
@@ -42,7 +42,7 @@ namespace parallel_suite::locks {
         constexpr static char const* name = "hpx::spinlock";
     };
 #endif
-}
+} // namespace parallel_suite::locks
 
 namespace parallel_bench::sets {
     using namespace parallel_suite;
@@ -88,7 +88,7 @@ namespace parallel_bench::sets {
         }
     }
 
-    #if HAVE_HPX
+#if HAVE_HPX
     template <SetType<int> IntSet>
     void benchSetHpx(usize const& nThreads, usize const& workSize) {
         std::vector<hpx::future<void>> futures;
@@ -128,14 +128,14 @@ namespace parallel_bench::sets {
             worker.get();
         }
     }
-    #endif
+#endif
 
-} // parallel_bench::sets
+} // namespace parallel_bench::sets
 
 using namespace parallel_bench;
 using namespace parallel_bench::sets;
 
-template <template<typename, typename> class Set, MutexType Mutex, typename... Rest>
+template <template <typename, typename> class Set, MutexType Mutex, typename... Rest>
 void benchSets(BenchParameters const& params, std::string const& setName, std::optional<std::string> const& which) {
     auto lockName = locks::LockTraits<Mutex>::name;
     std::string specific(setName);
@@ -157,7 +157,7 @@ void benchSets(BenchParameters const& params, std::string const& setName, std::o
 }
 
 #if HAVE_HPX
-template <template<typename, typename> class Set, MutexType Mutex, typename... Rest>
+template <template <typename, typename> class Set, MutexType Mutex, typename... Rest>
 void benchSetsHpx(BenchParameters const& params, std::string const& setName, std::optional<std::string> const& which) {
     auto lockName = locks::LockTraits<Mutex>::name;
     std::string specific(setName);
@@ -182,9 +182,8 @@ int hpx_main() {
     BenchParameters params("c++", "setByLocks");
 
     benchSetsHpx<FineGrainedSet,
-              hpx::mutex,
-              hpx::spinlock
-    >(params, "FineGrainedSet", params.getWhich());
+                 hpx::mutex,
+                 hpx::spinlock>(params, "FineGrainedSet", params.getWhich());
     return hpx::finalize();
 }
 #endif
@@ -204,8 +203,7 @@ int main() {
               locks::TASLock,
               locks::TIdLock,
               locks::TTASLock,
-              locks::TwoCounterLock
-    >(params, "FineGrainedSet", params.getWhich());
+              locks::TwoCounterLock>(params, "FineGrainedSet", params.getWhich());
 
 #if HAVE_HPX
     if (params.getUseHpx()) {

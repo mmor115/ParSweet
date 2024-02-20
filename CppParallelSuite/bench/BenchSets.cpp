@@ -1,12 +1,12 @@
 #include "Bench.hpp"
 
-#include <vector>
 #include <future>
+#include <vector>
 
-#include "../sets/LockHashSet.hpp"
 #include "../sets/FineGrainedSet.hpp"
-#include "../sets/OptimisticSet.hpp"
 #include "../sets/LazySet.hpp"
+#include "../sets/LockHashSet.hpp"
+#include "../sets/OptimisticSet.hpp"
 #include "BlackBox.hpp"
 
 namespace parallel_bench::sets {
@@ -53,7 +53,7 @@ namespace parallel_bench::sets {
         }
     }
 
-} // parallel_bench::sets
+} // namespace parallel_bench::sets
 
 using namespace parallel_bench;
 using namespace parallel_bench::sets;

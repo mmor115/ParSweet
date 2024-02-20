@@ -2,12 +2,12 @@
 #ifndef ALOCK_HPP
 #define ALOCK_HPP
 
+#include "../Types.hpp"
+#include "../threadlocal/ThreadLocal.hpp"
+#include "LockTraits.hpp"
+#include <array>
 #include <atomic>
 #include <thread>
-#include <array>
-#include "../threadlocal/ThreadLocal.hpp"
-#include "../Types.hpp"
-#include "LockTraits.hpp"
 
 namespace parallel_suite::locks {
     using namespace threadlocal;
@@ -46,6 +46,6 @@ namespace parallel_suite::locks {
     struct LockTraits<ALock<ThreadCount>> {
         constexpr static char const* name = "ALock";
     };
-}
+} // namespace parallel_suite::locks
 
 #endif //ALOCK_HPP

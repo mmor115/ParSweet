@@ -1,25 +1,25 @@
 #include "Bench.hpp"
 
-#include <vector>
-#include <thread>
-#include <mutex>
-#include <unordered_map>
 #include <functional>
+#include <mutex>
+#include <thread>
+#include <unordered_map>
+#include <vector>
 
 #if HAVE_HPX
-  #include <hpx/hpx.hpp>
-  #include <hpx/hpx_init.hpp>
+#include <hpx/hpx.hpp>
+#include <hpx/hpx_init.hpp>
 #endif
 #include "../MutexType.hpp"
 #include "../locks/ALock.hpp"
-#include "../locks/OptimizedALock.hpp"
-#include "../locks/IdLock.hpp"
-#include "../locks/TIdLock.hpp"
-#include "../locks/TASLock.hpp"
-#include "../locks/TTASLock.hpp"
 #include "../locks/BackoffLock.hpp"
 #include "../locks/CLHLock.hpp"
+#include "../locks/IdLock.hpp"
 #include "../locks/MCSLock.hpp"
+#include "../locks/OptimizedALock.hpp"
+#include "../locks/TASLock.hpp"
+#include "../locks/TIdLock.hpp"
+#include "../locks/TTASLock.hpp"
 #include "../locks/TwoCounterLock.hpp"
 #include "BlackBox.hpp"
 
@@ -73,7 +73,7 @@ namespace parallel_bench::locks {
     }
 #endif
 
-} // parallel_bench::locks
+} // namespace parallel_bench::locks
 
 
 using namespace parallel_bench;
@@ -95,7 +95,7 @@ constexpr auto benchHpxLockWrapper() {
 }
 #endif
 
-std::unordered_map<std::string, std::function<void(BenchParameters const&)>> tests {
+std::unordered_map<std::string, std::function<void(BenchParameters const&)>> tests{
         {"ALock", benchLockWrapper<ALock<N_THREADS_ALLOC>>()},
         {"OptimizedALock", benchLockWrapper<OptimizedALock<N_THREADS_ALLOC>>()},
         {"BackoffLock<1:17>", benchLockWrapper<BackoffLock<1, 17>>()},
@@ -107,14 +107,12 @@ std::unordered_map<std::string, std::function<void(BenchParameters const&)>> tes
         {"TTASLock", benchLockWrapper<TTASLock>()},
         {"TwoCounterLock", benchLockWrapper<TwoCounterLock>()},
         {"std::mutex", benchLockWrapper<std::mutex>()},
-        {"std::recursive_mutex", benchLockWrapper<std::recursive_mutex>()}
-};
+        {"std::recursive_mutex", benchLockWrapper<std::recursive_mutex>()}};
 
 #if HAVE_HPX
-std::unordered_map<std::string, std::function<void(BenchParameters const&)>> hpxTests {
+std::unordered_map<std::string, std::function<void(BenchParameters const&)>> hpxTests{
         {"hpx::mutex", benchHpxLockWrapper<hpx::mutex>()},
-        {"hpx::spinlock", benchHpxLockWrapper<hpx::spinlock>()}
-};
+        {"hpx::spinlock", benchHpxLockWrapper<hpx::spinlock>()}};
 
 int hpx_main() {
     BenchParameters params("c++", "locks");

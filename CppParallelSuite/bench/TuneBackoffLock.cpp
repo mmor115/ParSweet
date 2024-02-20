@@ -1,14 +1,14 @@
 
 #include "Bench.hpp"
 
-#include <cassert>
-#include <vector>
-#include <thread>
-#include <optional>
 #include "../MutexType.hpp"
 #include "../locks/BackoffLock.hpp"
 #include "BlackBox.hpp"
 #include "UnrolledFor.hpp"
+#include <cassert>
+#include <optional>
+#include <thread>
+#include <vector>
 
 namespace parallel_bench::locks {
     using namespace parallel_suite;
@@ -39,7 +39,7 @@ namespace parallel_bench::locks {
 
         blackBox(counter);
     }
-} // parallel_bench::locks
+} // namespace parallel_bench::locks
 
 using namespace parallel_bench;
 using namespace parallel_bench::locks;
@@ -50,7 +50,7 @@ int main() {
     std::optional<std::tuple<std::string, Duration_t>> best(std::nullopt);
 
     unrolledFor<1, 10>([&params, &best]<typename I>(I i) {
-        unrolledFor<I::value, 20>([&i=I::value, &params, &best](auto j) {
+        unrolledFor<I::value, 20>([&i = I::value, &params, &best](auto j) {
             std::string specific("BackoffLock");
             formatSpecific(specific, i, j);
 

@@ -15,6 +15,6 @@ namespace parallel_suite {
     concept TryLockMutexType = MutexType<L> && requires(L l) {
         { l.try_lock() } -> std::convertible_to<bool>;
     };
-}
+} // namespace parallel_suite
 
 #endif //MUTEXTYPE_HPP

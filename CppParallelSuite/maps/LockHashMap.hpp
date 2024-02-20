@@ -2,12 +2,12 @@
 #ifndef LOCKHASHMAP_HPP
 #define LOCKHASHMAP_HPP
 
-#include <mutex>
+#include "../KeyType.hpp"
+#include "../MutexType.hpp"
+#include "../Types.hpp"
 #include <array>
 #include <condition_variable>
-#include "../KeyType.hpp"
-#include "../Types.hpp"
-#include "../MutexType.hpp"
+#include <mutex>
 
 namespace parallel_suite::maps {
 
@@ -19,7 +19,7 @@ namespace parallel_suite::maps {
             V value;
             std::unique_ptr<Node> next;
 
-            Node(K key, V value) : key(key), value(value), next(nullptr) { }
+            Node(K key, V value) : key(key), value(value), next(nullptr) {}
         };
 
         class NodeHead {
@@ -27,7 +27,7 @@ namespace parallel_suite::maps {
             Mutex mutex;
             std::unique_ptr<Node> head;
 
-            NodeHead() : mutex(), head(nullptr) { }
+            NodeHead() : mutex(), head(nullptr) {}
         };
 
     private:
@@ -46,7 +46,7 @@ namespace parallel_suite::maps {
         }
 
     public:
-        LockHashMap() : buckets() { }
+        LockHashMap() : buckets() {}
 
         bool put(K key, V value) {
             auto index = getBucketIndexOfKey(key);
@@ -133,9 +133,8 @@ namespace parallel_suite::maps {
 
             return false;
         }
-
     };
-} // parallel_suite::maps
+} // namespace parallel_suite::maps
 
 
 #endif //LOCKHASHMAP_HPP

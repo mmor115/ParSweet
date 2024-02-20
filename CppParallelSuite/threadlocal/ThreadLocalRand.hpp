@@ -10,6 +10,6 @@ namespace parallel_suite::threadlocal {
 
         ThreadLocalRand() = delete;
     };
-} // parallel_suite::threadlocal
+} // namespace parallel_suite::threadlocal
 
 #endif //THREAD_LOCAL_RAND_HPP

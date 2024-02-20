@@ -9,6 +9,6 @@ namespace parallel_suite::locks {
     struct LockTraits {
         constexpr static char const* name = nullptr;
     };
-} // parallel_suite::locks
+} // namespace parallel_suite::locks
 
 #endif //LOCK_TRAITS_HPP

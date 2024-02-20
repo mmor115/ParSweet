@@ -3,4 +3,4 @@
 
 namespace parallel_suite::threadlocal {
     thread_local IntRand ThreadLocalRand::intRand{};
-} // parallel_suite::threadlocal
+} // namespace parallel_suite::threadlocal

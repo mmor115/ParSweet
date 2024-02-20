@@ -1,14 +1,14 @@
 #include "Bench.hpp"
 
-#include <vector>
 #include <future>
+#include <vector>
 
-#include "../maps/MapTypes.hpp"
 #include "../maps/LockHashMap.hpp"
+#include "../maps/MapTypes.hpp"
 #include "../maps/SetBasedMap.hpp"
 #include "../sets/FineGrainedSet.hpp"
-#include "../sets/OptimisticSet.hpp"
 #include "../sets/LazySet.hpp"
+#include "../sets/OptimisticSet.hpp"
 
 #include "BlackBox.hpp"
 
@@ -64,7 +64,7 @@ namespace parallel_bench::maps {
             worker.get();
         }
     }
-} // parallel_bench::maps
+} // namespace parallel_bench::maps
 
 using namespace parallel_bench;
 using namespace parallel_bench::maps;

@@ -2,19 +2,20 @@
 #ifndef THREADID_HPP
 #define THREADID_HPP
 
+#include "../Types.hpp"
 #include <atomic>
 #include <cassert>
 #include <iostream>
-#include "../Types.hpp"
 
 namespace parallel_suite::threadlocal {
     class ThreadId {
     private:
         static std::atomic<usize> idCounter;
         static thread_local usize id;
+
     public:
         static usize get() {
-            if (id == 0)  {
+            if (id == 0) {
                 id = idCounter.fetch_add(1);
             }
 
@@ -22,6 +23,6 @@ namespace parallel_suite::threadlocal {
             return id;
         }
     };
-} // parallel_suite::threadlocal
+} // namespace parallel_suite::threadlocal
 
 #endif //THREADID_HPP

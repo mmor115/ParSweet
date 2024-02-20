@@ -2,17 +2,17 @@
 #ifndef BENCH_PARAMETERS_HPP
 #define BENCH_PARAMETERS_HPP
 
-#include <string>
-#include <utility>
-#include <stdexcept>
+#include "../Types.hpp"
 #include <chrono>
+#include <cstring>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
-#include <thread>
 #include <optional>
-#include <cstring>
-#include "../Types.hpp"
+#include <stdexcept>
+#include <string>
+#include <thread>
+#include <utility>
 
 namespace parallel_bench {
 
@@ -150,6 +150,6 @@ namespace parallel_bench {
         std::cout << "Wrote to " << std::filesystem::absolute(std::filesystem::path(outPath)) << std::endl;
     }
 
-} // parallel_bench
+} // namespace parallel_bench
 
 #endif //BENCH_PARAMETERS_HPP

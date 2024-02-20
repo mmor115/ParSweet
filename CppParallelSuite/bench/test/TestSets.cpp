@@ -1,14 +1,16 @@
-#include <iostream>
-#include <vector>
-#include <mutex>
-#include <future>
-#include "../../sets/LockHashSet.hpp"
 #include "../../sets/FineGrainedSet.hpp"
-#include "../../sets/OptimisticSet.hpp"
 #include "../../sets/LazySet.hpp"
+#include "../../sets/LockHashSet.hpp"
+#include "../../sets/OptimisticSet.hpp"
+#include <future>
+#include <iostream>
+#include <mutex>
+#include <vector>
 
-#define TEST_X if (!x) { return false; }
-#define TEST_NOT_X if (x) { return false; }
+#define TEST_X \
+    if (!x) { return false; }
+#define TEST_NOT_X \
+    if (x) { return false; }
 
 namespace parallel_test::sets {
     using namespace parallel_suite;
@@ -77,7 +79,7 @@ namespace parallel_test::sets {
     bool testAs() {
         return (testA<Sets>() && ...);
     }
-} // parallel_test::sets
+} // namespace parallel_test::sets
 
 using namespace parallel_test::sets;
 
@@ -86,8 +88,7 @@ int main() {
             LockHashSet<int, 16, std::mutex>,
             FineGrainedSet<int, std::mutex>,
             OptimisticSet<int, std::mutex>,
-            LazySet<int, std::mutex>
-    >();
+            LazySet<int, std::mutex>>();
     return ok ? 0
               : 0xBAD;
 }

@@ -2,9 +2,9 @@
 #ifndef TASLOCK_HPP
 #define TASLOCK_HPP
 
+#include "LockTraits.hpp"
 #include <atomic>
 #include <thread>
-#include "LockTraits.hpp"
 
 namespace parallel_suite::locks {
     class TASLock {
@@ -12,7 +12,7 @@ namespace parallel_suite::locks {
         std::atomic<bool> aBool;
 
     public:
-        TASLock() : aBool(false) { }
+        TASLock() : aBool(false) {}
 
         void lock() {
             while (aBool.exchange(true)) {
@@ -29,6 +29,6 @@ namespace parallel_suite::locks {
     struct LockTraits<TASLock> {
         constexpr static char const* name = "TASLock";
     };
-}
+} // namespace parallel_suite::locks
 
 #endif //TASLOCK_HPP

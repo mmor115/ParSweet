@@ -2,9 +2,9 @@
 #ifndef THREAD_LOCAL_HPP
 #define THREAD_LOCAL_HPP
 
-#include <pthread.h>
 #include "../Types.hpp"
 #include "ThreadId.hpp"
+#include <pthread.h>
 
 namespace parallel_suite::threadlocal {
 
@@ -20,7 +20,9 @@ namespace parallel_suite::threadlocal {
         }
 
     public:
-        ThreadLocal() requires std::is_default_constructible_v<T> {
+        ThreadLocal()
+        requires std::is_default_constructible_v<T>
+        {
             static_assert(MaxThreads > 0);
 
             dataArr = new T[MaxThreads];
@@ -59,6 +61,6 @@ namespace parallel_suite::threadlocal {
             dataArr[idx] = val;
         }
     };
-} // parallel_suite::threadlocal
+} // namespace parallel_suite::threadlocal
 
 #endif //THREAD_LOCAL_HPP

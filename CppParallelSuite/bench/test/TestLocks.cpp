@@ -1,18 +1,18 @@
-#include <iostream>
-#include <vector>
-#include <thread>
-#include <mutex>
-#include "../../locks/ALock.hpp"
-#include "../../locks/OptimizedALock.hpp"
-#include "../../locks/IdLock.hpp"
-#include "../../locks/TIdLock.hpp"
-#include "../../locks/TASLock.hpp"
-#include "../../locks/TTASLock.hpp"
 #include "../../MutexType.hpp"
+#include "../../locks/ALock.hpp"
 #include "../../locks/BackoffLock.hpp"
 #include "../../locks/CLHLock.hpp"
+#include "../../locks/IdLock.hpp"
 #include "../../locks/MCSLock.hpp"
+#include "../../locks/OptimizedALock.hpp"
+#include "../../locks/TASLock.hpp"
+#include "../../locks/TIdLock.hpp"
+#include "../../locks/TTASLock.hpp"
 #include "../../locks/TwoCounterLock.hpp"
+#include <iostream>
+#include <mutex>
+#include <thread>
+#include <vector>
 
 namespace parallel_test::locks {
     using namespace parallel_suite;
@@ -48,7 +48,7 @@ namespace parallel_test::locks {
 
         return target == counter;
     }
-} // parallel_test::locks
+} // namespace parallel_test::locks
 
 using namespace parallel_test::locks;
 
@@ -83,8 +83,7 @@ int main() {
             MCSLock,
             IdLock,
             TIdLock,
-            TwoCounterLock
-    >();
+            TwoCounterLock>();
 
     return ok ? 0
               : 0xBAD;

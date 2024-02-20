@@ -1,16 +1,18 @@
+#include <future>
 #include <iostream>
 #include <vector>
-#include <future>
 
-#include "../../maps/MapTypes.hpp"
 #include "../../maps/LockHashMap.hpp"
+#include "../../maps/MapTypes.hpp"
 #include "../../maps/SetBasedMap.hpp"
-#include "../../sets/OptimisticSet.hpp"
-#include "../../sets/LazySet.hpp"
 #include "../../sets/FineGrainedSet.hpp"
+#include "../../sets/LazySet.hpp"
+#include "../../sets/OptimisticSet.hpp"
 
-#define TEST_X if (!x) { return false; }
-#define TEST_NOT_X if (x) { return false; }
+#define TEST_X \
+    if (!x) { return false; }
+#define TEST_NOT_X \
+    if (x) { return false; }
 
 namespace parallel_test::maps {
     using namespace parallel_suite;
@@ -88,7 +90,7 @@ namespace parallel_test::maps {
     bool testAs() {
         return (testA<Maps>() && ...);
     }
-} // parallel_test::sets
+} // namespace parallel_test::maps
 
 using namespace parallel_test::maps;
 
@@ -97,8 +99,7 @@ int main() {
             LockHashMap<int, int>,
             SetBasedMap<int, int, sets::FineGrainedSet>,
             SetBasedMap<int, int, sets::OptimisticSet>,
-            SetBasedMap<int, int, sets::LazySet>
-    >();
+            SetBasedMap<int, int, sets::LazySet>>();
     return ok ? 0
               : 0xBAD;
 }

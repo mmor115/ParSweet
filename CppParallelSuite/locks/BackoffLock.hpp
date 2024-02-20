@@ -2,11 +2,11 @@
 #ifndef BACKOFF_LOCK_HPP
 #define BACKOFF_LOCK_HPP
 
+#include "../threadlocal/ThreadLocalRand.hpp"
+#include "LockTraits.hpp"
 #include <atomic>
 #include <chrono>
 #include <thread>
-#include "../threadlocal/ThreadLocalRand.hpp"
-#include "LockTraits.hpp"
 
 namespace parallel_suite::locks {
 
@@ -14,8 +14,9 @@ namespace parallel_suite::locks {
     class BackoffLock {
     private:
         std::atomic<bool> aBool;
+
     public:
-        BackoffLock() : aBool(false) { }
+        BackoffLock() : aBool(false) {}
 
         void lock() {
             int delayLimit = MinDelay;
@@ -44,6 +45,6 @@ namespace parallel_suite::locks {
     struct LockTraits<locks::BackoffLock<MinDelay, MaxDelay>> {
         constexpr static char const* name = "BackoffLock";
     };
-}
+} // namespace parallel_suite::locks
 
 #endif //BACKOFF_LOCK_HPP
