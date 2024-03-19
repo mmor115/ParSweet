@@ -1,0 +1,33 @@
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{Lock} & \textbf{Time(ms)} & \textbf{$\sigma$(ms)} \\
+\hline
+TTASLock & 9.00 & 1.32 \\
+\hline
+TIdLock & 9.04 & 1.37 \\
+\hline
+TASLock & 9.33 & 1.49 \\
+\hline
+hpx::spinlock\HpxLock & 11.09 & 1.78 \\
+\hline
+IdLock & 11.50 & 1.00 \\
+\hline
+hpx::mutex\HpxLock & 11.73 & 1.45 \\
+\hline
+TwoCounterLock\FairLock & 12.62 & 2.50 \\
+\hline
+MCSLock\FairLock & 14.00 & 2.92 \\
+\hline
+BackoffLock & 15.25 & 4.99 \\
+\hline
+ALock\FairLock & 18.96 & 5.49 \\
+\hline
+CLHLock\FairLock & 20.54 & 5.66 \\
+\hline
+OptimizedALock\FairLock & 26.00 & 9.33 \\
+\hline
+std::mutex & 75.42 & 10.28 \\
+\hline
+std::recursive\_mutex & 81.83 & 10.34 \\
+\hline
+\end{tabular}

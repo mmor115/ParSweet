@@ -1,1 +1,4 @@
 /JavaParallelSuite/out/
+/CppParallelSuite/cmake-build*
+/**/.idea/
+/JavaParallelSuite/srcRoot
