@@ -21,6 +21,7 @@ namespace parallel_bench {
         std::string lang;
         std::string category;
         std::string machine{};
+        std::string outPath{};
         std::optional<std::string> which{};
         usize nThreads{};
         usize workPerThread{};
@@ -51,6 +52,12 @@ namespace parallel_bench {
                 machine = szMachine;
             } else {
                 throw std::runtime_error("bad PSWEET_MACHINE");
+            }
+
+            if (auto* szOutPath = std::getenv("PSWEET_OUT_PATH")) {
+                outPath = szOutPath;
+            } else {
+                outPath = "psweet.csv";
             }
 
             if (auto* szCooldown = std::getenv("PSWEET_COOLDOWN")) {
@@ -96,6 +103,11 @@ namespace parallel_bench {
         }
 
         [[nodiscard]]
+        inline std::string const& getOutPath() const {
+            return outPath;
+        }
+
+        [[nodiscard]]
         inline std::optional<std::string> const& getWhich() const {
             return which;
         }
@@ -133,7 +145,7 @@ namespace parallel_bench {
     }
 
     void writeBenchResult(BenchParameters const& params, std::string const& specific, Duration_t const& duration) {
-        static constexpr auto outPath{"psweet.csv"};
+        auto const& outPath = params.getOutPath();
 
         std::ofstream f;
         if (!std::filesystem::exists(outPath)) {
