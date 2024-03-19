@@ -1,4 +1,6 @@
-# ParSweet: A Suite of Codes for Benchmarking and Testing Mutex-Based Parallel Systems
+# ParSweet: A Suite of Codes for Benchmarking and Testing Mutex-Based Parallel Systems 
+
+[![DOI](https://zenodo.org/badge/734404770.svg)](https://zenodo.org/doi/10.5281/zenodo.10685293)
 
 ## What?
 ParSweet is a collection of small- to medium-sized codes designed to cover common (or uncommon) use cases of mutual

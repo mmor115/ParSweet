@@ -7,9 +7,11 @@ import sys
 import argparse
 
 parser = argparse.ArgumentParser(prog='psweet_stats', description='Create a table of PSweet Stats')
+parser.add_argument('psweet_file', type=str, help='the file name')
 parser.add_argument('--category', type=str, default='locks', help='category to plot')
 parser.add_argument('--work-size', type=int, help='work size to plot')
 parser.add_argument('--num-threads', type=int, help='number of threads to plot')
+parser.add_argument('--cpu-check', action='store_true', default=False, help='check that the number of cpus match the current machine')
 pres=parser.parse_args(sys.argv[1:])
 
 class Info:
@@ -33,7 +35,8 @@ class Info:
         self.machine = w
 
     def set_threads(self, w):
-        assert self.threads is None or self.threads == w, f"{self.threads} != {w}"
+        if pres.cpu_check:
+            assert self.threads is None or self.threads == w, f"{self.threads} != {w}"
         self.threads = w
 
 class Stat:
@@ -67,7 +70,7 @@ class Stat:
         return avg, sdev, n
 
 info = Info()
-with open('psweet.csv', 'r') as csvfile:
+with open(pres.psweet_file, 'r') as csvfile:
     reader = csv.DictReader(csvfile)
     bins = dict()
     work_size = pres.work_size
